@@ -3,7 +3,7 @@ import { Button } from "flowbite-react";
 import { useTelegram } from './UseTelegram';
 
 function Rate() {
-    const {webApp, executeMethod} = useTelegram()
+    const {webApp} = useTelegram()
     var rate = 4.5;
 
     return (
