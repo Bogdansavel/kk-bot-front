@@ -3,12 +3,12 @@ import { Button } from "flowbite-react";
 import { useTelegram } from './UseTelegram';
 
 function Rate() {
-    const {webApp} = useTelegram()
-    var rate = 4.5;
+    const {webApp, executeMethod} = useTelegram()
+    var rate = 4.4;
 
     return (
         <>
-            <div className="flex justify-center items-center h-screen">
+            <div className="flex justify-center items-center">
                 <form>
                     <div className='flex justify-center text-xl pb-2'>
                         <label className='opacity-50'>Средняя оценка Киноклуба</label>
@@ -22,8 +22,11 @@ function Rate() {
                     <div className='flex justify-center'>
                         <Rating 
                         onChange={() => {
-                            webApp.HapticFeedback.impactOccured("soft");
+                            executeMethod('HapticFeedback.selectionChanged', webApp.HapticFeedback.selectionChanged, true)
                           }}
+                        sx={{
+                            fontSize: "4rem"
+                        }}
                         name="half-rating" defaultValue={0} precision={0.5} size="large" />
                     </div>
                     <div className='flex justify-center'>
