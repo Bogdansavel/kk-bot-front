@@ -6,7 +6,7 @@ function RegisteredMembers() {
     const [members, setMembers] = useState<any>([])
 
     useEffect(() => {
-        fetch("http://localhost:8080/members")
+        fetch("https://kk-backend-619198175847.europe-central2.run.app/members")
         .then(response => response.json())
         .then(json => {console.info(json), setMembers(json)})
         .catch(error => console.error(error))
@@ -15,13 +15,13 @@ function RegisteredMembers() {
     return (
         <>
             <div className="justify-center items-center">
-                <div className="flex justify-center text-xl pb-2">{members.length}/{max}</div>
+                <div className="flex justify-center text-xl pb-2 telegram-text">{members.length}/{max}</div>
                 {members.map((member: any) => {
                     return (
                         <div className="flex justify-center" key={member.id}>
-                            <div className="m-2 p-2 bg-slate-400 border-solid rounded-2xl border-4 border-sky-500" key={member.id}><a href={"t.me/${member.userName}"}>@{member.userName}</a></div>
+                            <div className="m-2 p-2 border-solid rounded-2xl border-4 telegram-border telegram-text" key={member.id}>@{member.userName}</div>
                             {member.freshBlood && 
-                                <div className="m-2 p-2 bg-yellow-400 border-solid rounded-2xl border-4 border-sky-500">Впервые</div>
+                                <div className="m-2 p-2 bg-yellow-400 border-solid rounded-2xl border-4">Впервые</div>
                             }
                         </div>
                     )
