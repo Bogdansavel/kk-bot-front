@@ -14,7 +14,7 @@ function RegisteredMembers() {
 
     return (
         <>
-            <div className="justify-center items-center">
+            <div className="justify-center items-center telegram-bg">
                 <div className="flex justify-center text-xl pb-2 telegram-text">{members.length}/{max}</div>
                 {members.map((member: any) => {
                     return (

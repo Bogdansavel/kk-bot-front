@@ -9,3 +9,7 @@
 .telegram-border {
     border-color: var(--tg-theme-text-color);
 }
+
+.telegram-bg {
+    background-color: var(--tg-theme-bg-color);
+}
