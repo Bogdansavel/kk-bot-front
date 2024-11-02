@@ -19,7 +19,7 @@ function RegisteredMembers() {
                 {members.map((member: any) => {
                     return (
                         <div className="flex justify-center" key={member.id}>
-                            <div className="m-2 p-2 border-solid rounded-2xl border-4 telegram-border telegram-text" key={member.id}>@{member.userName}</div>
+                            <div className="m-2 p-2 border-solid rounded-2xl border-4 telegram-border telegram-text" key={member.id}><a href={"https://t.me/${member.userName}"}>@{member.userName}</a></div>
                             {member.freshBlood && 
                                 <div className="m-2 p-2 bg-yellow-400 border-solid rounded-2xl border-4">Впервые</div>
                             }
