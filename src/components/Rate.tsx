@@ -1,42 +1,186 @@
 import Rating from '@mui/material/Rating';
+import StarBorder from '@mui/icons-material/StarBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import RecordVoiceOverIcon from '@mui/icons-material/RecordVoiceOver';
+import RecordVoiceOverOutlinedIcon from '@mui/icons-material/RecordVoiceOverOutlined';
 import { Button } from "flowbite-react";
 import { useTelegram } from './UseTelegram';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { BASE_URL } from '../Constants';
+import { useParams } from 'react-router-dom';
 
 function Rate() {
+    const {id} = useParams();
     const {webApp, executeMethod} = useTelegram()
-    var rate = 4.5;
+    const { username } = webApp.initDataUnsafe?.user
+    //const username = "test";
+
+    const defaultMovie = {
+        id: '',
+        kinopoiskId: 0,
+        name: '',
+        ratings: []
+    }
+
+    const defaultRate = {
+        id: null,
+        rating: 0
+    }
+
+    const [rate, setRate] = useState<any>(defaultRate)
+    const [rating, setRating] = useState<number>(0)
+    const [liked, setLiked] = useState(false);
+    const [discussable, setDiscussable] = useState(false);
+    const [movie, setMovie] = useState<any>(defaultMovie);
+
+    const navigate = useNavigate();
+
+    const handleLikeUnlike = async () => {
+        executeMethod('HapticFeedback.selectionChanged', webApp.HapticFeedback.selectionChanged, true);
+        setLiked(!liked)
+    };
+
+    const handleDiscussable = async () => {
+        executeMethod('HapticFeedback.selectionChanged', webApp.HapticFeedback.selectionChanged, true);
+        setDiscussable(!discussable)
+    };
+
+    const handleSubmit = (event: any) => {
+        executeMethod('HapticFeedback.impactOccurred', () => webApp.HapticFeedback.impactOccurred("heavy"), true);
+        if (rate.id) {
+            PutRating(event);
+        } else {
+            PostRating(event);
+        }
+    }
+
+    const PostRating = (event: any) => {
+        event.preventDefault();
+        const rateDto = {
+            rating: rating,
+            movieId: id,
+            username: username,
+            liked: liked,
+            discussable: discussable
+        };
+        fetch(BASE_URL + "/rate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "Application/JSON",
+              },
+              body: JSON.stringify(rateDto),
+        })
+        .then(response => response.status)
+        .then(status => {
+            if (status == 200){
+                navigate("/rates/" + id)
+            }
+        })
+        .catch(error => console.error(error))
+    }
+
+    const PutRating = (event: any) => {
+        event.preventDefault();
+        const rateDto = {
+            id: rate.id,
+            rating: rating,
+            movieId: id,
+            username: username,
+            liked: liked,
+            discussable: discussable
+        };
+        fetch(BASE_URL + "/rate", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "Application/JSON",
+              },
+              body: JSON.stringify(rateDto),
+        })
+        .then(response => response.status)
+        .then(status => {
+            if (status == 200){
+                navigate("/rates/" + id)
+            }
+        })
+        .catch(error => console.error(error))
+    }
+
+    useEffect(() => {
+        fetch(BASE_URL + `/rate/${id}/${username}`)
+        .then(response => response.json())
+        .then(json => {
+            console.info(json), 
+            setRate(json),
+            setRating(json.rating),
+            setLiked(json.liked)
+            setDiscussable(json.discussable)
+        })
+        .catch(error => console.error(error));
+
+        fetch(BASE_URL + "/movie/" + id)
+        .then(response => response.json())
+        .then(json => {
+            console.info(json); 
+            setMovie(json);
+        })
+        .catch(error => console.error(error));
+    }, []);
 
     return (
         <>
             <div className="flex justify-center items-center">
-                <form>
-                    <div className='flex justify-center text-xl pb-2'>
-                        <label className='opacity-50 telegram-text'>Средняя оценка Киноклуба</label>
+                <form onSubmit={handleSubmit}>
+                    <div className='flex justify-center pb-2'>
+                        <h1 className='telegram-text text-3xl'>{movie.name}</h1>
                     </div>
-                    <div className='flex justify-center text-5xl pb-4'>
-                        <label className='opacity-50 telegram-text'>{rate}</label>
-                    </div>
-                    <div className='flex justify-center'>
-                        <p className='text-sm telegram-text'>Как фильм</p>
+                    <div className='flex justify-center pb-2'>
+                        <p className='telegram-text'>Как вам фильм?</p>
                     </div>
                     <div className='flex justify-center'>
                         <Rating 
-                        onChange={() => {
-                            executeMethod('HapticFeedback.selectionChanged', webApp.HapticFeedback.selectionChanged, true)
+                        onChange={(event, value) => {
+                            console.info(event);
+                            executeMethod('HapticFeedback.selectionChanged', webApp.HapticFeedback.selectionChanged, true);
+                            if (value) {
+                                if (value == rating / 10) {
+                                    setRating(0);
+                                } else {
+                                    setRating(value * 10);    
+                                }
+                            }
                           }}
                         sx={{
                             fontSize: "4rem"
                         }}
-                        name="half-rating" defaultValue={0} precision={0.5} size="large" />
+                        emptyIcon = {<StarBorder fontSize="inherit" htmlColor='#ffa726'/>}
+                        name="half-rating" defaultValue={0} value={rating / 10} precision={0.5} size="large" />
+                    </div>
+                    <div className='grid gap-2 grid-cols-2 py-4'>
+                        <div onClick={handleLikeUnlike} className='col-start-1' style={{ cursor: 'pointer' }}>
+                            <div className='px-4 grid-rows-2 grid-cols-1 m-2'>
+                                <div className='row-start-1 flex items-center justify-center'>
+                                    {liked ? <FavoriteIcon sx={{fontSize: "3rem"}} color='error' /> : <FavoriteBorderIcon sx={{fontSize: "3rem"}} color='error' />}
+                                </div>
+                                <div className='row-start-2 flex items-center justify-center telegram-text text-sm'>
+                                    <label className='text-xs'>Понравился</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div onClick={handleDiscussable} className='col-start-2' style={{ cursor: 'pointer' }}>
+                            <div className='px-4 grid-rows-2 grid-cols-1 m-2'>
+                                <div className='row-start-1 flex items-center justify-center'>
+                                    {discussable ? <RecordVoiceOverIcon sx={{fontSize: "3rem"}} color='primary' /> : <RecordVoiceOverOutlinedIcon sx={{fontSize: "3rem"}} color='primary' />}
+                                </div>
+                                <div className='row-start-1 telegram-text'>
+                                    <label className='text-xs'>Есть что обсудить</label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div className='flex justify-center'>
-                        <p className='text-sm telegram-text'>Как предмет обсуждения</p>
-                    </div>
-                    <div className='flex justify-center'>
-                        <Rating name="half-rating" defaultValue={0} precision={0.5} size="large" />    
-                    </div>
-                    <div className='flex justify-center pt-4'>
-                        <Button color="yellow" pill>Оценить</Button>
+                        <Button type="submit" color="yellow" className='telegram-bg telegram-text'>Оценить</Button>
                     </div>
                 </form>
             </div>

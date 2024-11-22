@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+    background-color: var(--tg-theme-bg-color);
+}
+
 .telegram-text {
     color: var(--tg-theme-text-color);
 }

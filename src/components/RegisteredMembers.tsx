@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { BASE_URL } from "../Constants";
 
 function RegisteredMembers() {
     const max = 15;
@@ -6,7 +7,7 @@ function RegisteredMembers() {
     const [members, setMembers] = useState<any>([])
 
     useEffect(() => {
-        fetch("https://kk-backend-619198175847.europe-central2.run.app/members")
+        fetch(BASE_URL + "/members")
         .then(response => response.json())
         .then(json => {console.info(json), setMembers(json)})
         .catch(error => console.error(error))
@@ -19,7 +20,7 @@ function RegisteredMembers() {
                 {members.map((member: any) => {
                     return (
                         <div className="flex justify-center" key={member.id}>
-                            <div className="m-2 p-2 border-solid rounded-2xl border-4 telegram-border telegram-text" key={member.id}><a href={"https://t.me/${member.userName}"}>@{member.userName}</a></div>
+                            <div className="m-2 p-2 border-solid rounded-2xl border-4 telegram-border telegram-text" key={member.id}><a href={`https://t.me/${member.userName}`}>@{member.userName}</a></div>
                             {member.freshBlood && 
                                 <div className="m-2 p-2 bg-yellow-400 border-solid rounded-2xl border-4">Впервые</div>
                             }
