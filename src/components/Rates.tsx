@@ -98,7 +98,7 @@ function Rates() {
     return (
         <>
             <div className='flex justify-center pb-2'>
-                <label className='telegram-text text-center text-2xl'>Средняя оценка фильма"<br/>{average.movieName}"<br />от Киноклуба</label>
+                <label className='telegram-text text-center text-2xl'>Средняя оценка фильма<br/>"{average.movieName}"<br />от Киноклуба</label>
             </div>
             <div className='flex justify-center text-5xl pb-4'>
                 <label className='opacity-50 telegram-text'>{average.rating / 10}</label>
