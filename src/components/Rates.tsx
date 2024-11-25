@@ -21,7 +21,12 @@ function Rates() {
         executeMethod('HapticFeedback.impactOccurred', () => webApp.HapticFeedback.impactOccurred("soft"), true);
     };
 
-    const trimName = (name : string) => {
+    const trimName = (rating : any) => {
+        let name = rating.firstName;
+        if (name == null) {
+            name = rating.username;
+        }
+
         if (name) {
             if (name.length > 15) {
                 return name.substring(0, 12) + "..."
@@ -109,7 +114,7 @@ function Rates() {
             {movie.ratings.filter((r : any) => r.username != username).map((rating : any) =>
                 <div className='flex justify-center'>
                     <div className='flex align-middle justify-center m-2 p-2 border-solid rounded-2xl border-2 telegram-border telegram-text align-middle'>
-                        <label className='opacity-50 telegram-text px-2'><a href={`https://t.me/${rating.username}`} className='align-middle underline'>{trimName(rating.firstName)}</a>: </label>
+                        <label className='opacity-50 telegram-text px-2'><a href={`https://t.me/${rating.username}`} className='align-middle underline'>{trimName(rating)}</a>: </label>
                         <Rating 
                                 emptyIcon = {<StarBorder fontSize="inherit" htmlColor='#ffa726'/>}
                                 name="half-rating" value={rating.rating / 10} precision={0.5} size="large" readOnly />
