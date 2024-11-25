@@ -12,10 +12,12 @@ import { BASE_URL } from '../Constants';
 import { useParams } from 'react-router-dom';
 
 function Rate() {
-    const {id} = useParams();
+    const {movieId} = useParams();
     const {webApp, executeMethod} = useTelegram()
-    const { username } = webApp.initDataUnsafe?.user
-    //const username = "test";
+    //const { id, username, first_name } = webApp.initDataUnsafe?.user
+    const username = "test";
+    const first_name = "test";
+    const id = 0;
 
     const defaultMovie = {
         id: '',
@@ -60,8 +62,10 @@ function Rate() {
         event.preventDefault();
         const rateDto = {
             rating: rating,
-            movieId: id,
+            movieId: movieId,
             username: username,
+            firstName: first_name,
+            telegramId: id,
             liked: liked,
             discussable: discussable
         };
@@ -75,7 +79,7 @@ function Rate() {
         .then(response => response.status)
         .then(status => {
             if (status == 200){
-                navigate("/rates/" + id)
+                navigate("/rates/" + movieId)
             }
         })
         .catch(error => console.error(error))
@@ -86,8 +90,10 @@ function Rate() {
         const rateDto = {
             id: rate.id,
             rating: rating,
-            movieId: id,
+            movieId: movieId,
+            telegramId: id,
             username: username,
+            firstName: first_name,
             liked: liked,
             discussable: discussable
         };
@@ -101,14 +107,14 @@ function Rate() {
         .then(response => response.status)
         .then(status => {
             if (status == 200){
-                navigate("/rates/" + id)
+                navigate("/rates/" + movieId)
             }
         })
         .catch(error => console.error(error))
     }
 
     useEffect(() => {
-        fetch(BASE_URL + `/rate/${id}/${username}`)
+        fetch(BASE_URL + `/rate/${movieId}/${username}`)
         .then(response => response.json())
         .then(json => {
             console.info(json), 
@@ -119,7 +125,7 @@ function Rate() {
         })
         .catch(error => console.error(error));
 
-        fetch(BASE_URL + "/movie/" + id)
+        fetch(BASE_URL + "/movie/" + movieId)
         .then(response => response.json())
         .then(json => {
             console.info(json); 

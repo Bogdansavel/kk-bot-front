@@ -11,11 +11,11 @@ import RecordVoiceOverOutlinedIcon from '@mui/icons-material/RecordVoiceOverOutl
 import { useNavigate } from "react-router-dom";
 
 function Rates() {
-    const {id} = useParams();
+    const { movieId } = useParams();
     const navigate = useNavigate();
     const {webApp, executeMethod} = useTelegram();
-    const { username } = webApp.initDataUnsafe?.user
-    //const username = "test";
+    //const { username } = webApp.initDataUnsafe?.user
+    const username = "test";
 
     const handleClick = async () => {
         executeMethod('HapticFeedback.impactOccurred', () => webApp.HapticFeedback.impactOccurred("soft"), true);
@@ -52,10 +52,10 @@ function Rates() {
     const [yourRate, setYourRate] = useState<any>(defaultYourRate);
 
     useEffect(() => {
-        fetch(BASE_URL + `/rate/${id}/${username}`)
+        fetch(BASE_URL + `/rate/${movieId}/${username}`)
         .then(response => {
             if (response.status == 404) {
-                navigate("/rate/" + id)
+                navigate("/rate/" + movieId)
             };
             return response;
         })
@@ -66,27 +66,15 @@ function Rates() {
         })
         .catch(error => console.error(error));
 
-        fetch(BASE_URL + "/movie/" + id)
+        fetch(BASE_URL + "/movie/" + movieId)
         .then(response => response.json())
         .then(json => {
             console.info(json); 
             setMovie(json);
         })
         .catch(error => console.error(error));
-    }, []);
 
-    useEffect(() => {
-        fetch(BASE_URL + "/movie/" + id)
-        .then(response => response.json())
-        .then(json => {
-            console.info(json); 
-            setYourRate(json.ratings.find((rate : any) => rate.username == username));
-            setMovie(json);
-            console.info(yourRate);
-        })
-        .catch(error => console.error(error));
-
-        fetch(BASE_URL + "/rate/average/" + id)
+        fetch(BASE_URL + "/rate/average/" + movieId)
         .then(response => response.json())
         .then(json => {
             console.info(json), 
@@ -113,7 +101,7 @@ function Rates() {
                 <div>{yourRate.discussable ? <RecordVoiceOverIcon color='primary' className='align-middle ml-1'/> : <RecordVoiceOverOutlinedIcon color='primary' className='align-middle ml-1'/>}</div>
             </div>
             <div className='flex justify-center pb-8'>
-                <Link onClick={handleClick} to={'/rate/' + id} className='telegram-text'>Изменить оценку</Link>
+                <Link onClick={handleClick} to={'/rate/' + movieId} className='telegram-text'>Изменить оценку</Link>
             </div>
             <div className='flex justify-center'>
                 <label className='opacity-50 telegram-text'>Оценки участников:</label>
@@ -121,7 +109,7 @@ function Rates() {
             {movie.ratings.filter((r : any) => r.username != username).map((rating : any) =>
                 <div className='flex justify-center'>
                     <div className='flex align-middle justify-center m-2 p-2 border-solid rounded-2xl border-2 telegram-border telegram-text align-middle'>
-                        <label className='opacity-50 telegram-text px-2'><a href={`https://t.me/${rating.username}`} className='align-middle'>@{trimName(rating.username)}: </a></label>
+                        <label className='opacity-50 telegram-text px-2'><a href={`https://t.me/${rating.username}`} className='align-middle underline'>{trimName(rating.firstName)}</a>: </label>
                         <Rating 
                                 emptyIcon = {<StarBorder fontSize="inherit" htmlColor='#ffa726'/>}
                                 name="half-rating" value={rating.rating / 10} precision={0.5} size="large" readOnly />
