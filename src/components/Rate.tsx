@@ -14,10 +14,10 @@ import { useParams } from 'react-router-dom';
 function Rate() {
     const {movieId} = useParams();
     const {webApp, executeMethod} = useTelegram()
-    //const { id, username, first_name } = webApp.initDataUnsafe?.user
-    const username = "test";
-    const first_name = "test";
-    const id = 0;
+    const { id, username, first_name } = webApp.initDataUnsafe?.user
+    //const username = "test";
+    //const first_name = "test";
+    //const id = 0;
 
     const defaultMovie = {
         id: '',
