@@ -116,9 +116,9 @@ function Rate() {
     fetch(BASE_URL + `/rate/${movieId}/${username}`)
       .then((response) => response.json())
       .then((json) => {
-        console.info(json),
-          setRate(json),
-          setRating(json.rating),
+        console.info(json);
+          setRate(json);
+          setRating(json.rating);
           setLiked(json.liked);
         setDiscussable(json.discussable);
       })
@@ -131,7 +131,7 @@ function Rate() {
         setMovie(json);
       })
       .catch((error) => console.error(error));
-  }, []);
+  }, [movieId, username]);
 
   return (
     <>
