@@ -14,8 +14,8 @@ function Rates() {
     const { movieId } = useParams();
     const navigate = useNavigate();
     const {webApp, executeMethod} = useTelegram();
-    const { username } = webApp.initDataUnsafe?.user
-    //const username = "test";
+    //const { username } = webApp.initDataUnsafe?.user
+   const username = "test";
 
     const handleClick = async () => {
         executeMethod('HapticFeedback.impactOccurred', () => webApp.HapticFeedback.impactOccurred("soft"), true);
