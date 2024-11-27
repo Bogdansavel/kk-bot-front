@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../../Constants";
 import { useParams } from "react-router-dom";
-import { defaultMovie, IMovie, mockUser } from "./constants";
+import { defaultMovie, defaultRate, IMovie, IRate, mockUser } from "./constants";
 
 function Rate() {
   const { movieId } = useParams();
@@ -18,12 +18,7 @@ function Rate() {
   /* const { id, username, first_name } = webApp.initDataUnsafe?.user */
   const { id, username, first_name } = mockUser;
 
-  const defaultRate = {
-    id: null,
-    rating: 0,
-  };
-
-  const [rate, setRate] = useState<any>(defaultRate);
+  const [rate, setRate] = useState<IRate>(defaultRate);
   const [rating, setRating] = useState<number>(0);
   const [liked, setLiked] = useState(false);
   const [discussable, setDiscussable] = useState(false);

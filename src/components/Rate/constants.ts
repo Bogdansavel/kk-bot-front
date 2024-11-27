@@ -11,6 +11,11 @@ export interface IMovie {
   ratings: number[];
 }
 
+export interface IRate {
+    id: null;
+    rating: number;
+  }
+
 export const mockUser: IUser = {
   username: "test",
   first_name: "test",
@@ -23,3 +28,8 @@ export const defaultMovie: IMovie = {
   name: "",
   ratings: [],
 };
+
+export const defaultRate = {
+    id: null,
+    rating: 0,
+  };
