@@ -16,7 +16,7 @@ import {
   IMovie,
   IRate,
   mockUser,
-} from "./constants";
+} from "../constants";
 import DeleteRateButton from "../DeleteRateButton/DeleteRateButton";
 
 function Rate() {

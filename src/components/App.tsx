@@ -1,7 +1,7 @@
 import Rate from './Rate/Rate';
 import RegisteredMembers from './RegisteredMembers';
 import { Routes, Route } from "react-router-dom";
-import Rates from './Rates';
+import Rates from './Rates/Rates';
 
 function App() {
   return (
