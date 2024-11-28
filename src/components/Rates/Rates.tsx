@@ -11,6 +11,7 @@ import RecordVoiceOverOutlinedIcon from "@mui/icons-material/RecordVoiceOverOutl
 import { useNavigate } from "react-router-dom";
 import { defaultAverage, defaultMovie, defaultYourRate } from "../constants";
 import { IMovie, IAverage, IYourRate } from "../interfaces";
+import DeleteRateButton from "../DeleteRateButton/DeleteRateButton";
 
 function Rates() {
   const { movieId } = useParams();
@@ -18,6 +19,10 @@ function Rates() {
   const { webApp, executeMethod } = useTelegram();
   //const { username } = webApp.initDataUnsafe?.user
   const username = "test";
+
+  const [movie, setMovie] = useState<IMovie>(defaultMovie);
+  const [average, setAverage] = useState<IAverage>(defaultAverage);
+  const [yourRate, setYourRate] = useState<IYourRate>(defaultYourRate);
 
   const handleClick = async () => {
     executeMethod(
@@ -35,10 +40,6 @@ function Rates() {
     }
     return name;
   };
-
-  const [movie, setMovie] = useState<IMovie>(defaultMovie);
-  const [average, setAverage] = useState<IAverage>(defaultAverage);
-  const [yourRate, setYourRate] = useState<IYourRate>(defaultYourRate);
 
   useEffect(() => {
     fetch(BASE_URL + `/rate/${movieId}/${username}`)
@@ -120,7 +121,7 @@ function Rates() {
           )}
         </div>
       </div>
-      <div className="flex justify-center pb-8">
+      <div className="flex justify-center pb-1">
         <Link
           onClick={handleClick}
           to={"/rate/" + movieId}
@@ -129,7 +130,17 @@ function Rates() {
           Изменить оценку
         </Link>
       </div>
-      <div className="flex justify-center">
+      {yourRate.id && (
+        <DeleteRateButton
+          rateId={yourRate.id}
+          onDeleteSuccess={() => {
+            console.log("onDelete  called in the rates");
+            setYourRate(defaultYourRate);
+            navigate(`/rates/${movieId}`);
+          }}
+        />
+      )}
+      <div className="flex justify-center mt-8">
         <label className="opacity-50 telegram-text">Оценки участников:</label>
       </div>
       {movie.ratings

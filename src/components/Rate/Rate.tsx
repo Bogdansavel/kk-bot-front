@@ -13,11 +13,10 @@ import { useParams } from "react-router-dom";
 import {
   defaultMovie,
   defaultRate,
-  IMovie,
-  IRate,
   mockUser,
 } from "../constants";
 import DeleteRateButton from "../DeleteRateButton/DeleteRateButton";
+import { IRate, IMovie } from "../interfaces";
 
 function Rate() {
   const { movieId } = useParams();
@@ -32,6 +31,8 @@ function Rate() {
   const [movie, setMovie] = useState<IMovie>(defaultMovie);
 
   const navigate = useNavigate();
+
+  console.log("rate.id", rate.id);
 
   const handleLikeUnlike = async () => {
     executeMethod(

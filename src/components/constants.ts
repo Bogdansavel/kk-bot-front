@@ -6,7 +6,6 @@ export const mockUser: IUser = {
   id: 0,
 };
 
-
 export const defaultMovie: IMovie = {
   id: "",
   kinopoiskId: 0,
@@ -15,19 +14,20 @@ export const defaultMovie: IMovie = {
 };
 
 export const defaultRate: IRate = {
-    id: null,
-    rating: 0,
-  };
+  id: null ,
+  rating: 0,
+};
 
-  export const defaultAverage: IAverage = {
-    movieName: '?',
-    rating: 0
-}
+export const defaultAverage: IAverage = {
+  movieName: "?",
+  rating: 0,
+};
 
 export const defaultYourRate: IYourRate = {
-  username: '',
-  movieId: '',
+  id: "",
+  username: "",
+  movieId: "",
   rating: 0,
   liked: false,
-  discussable: false
-}
+  discussable: false,
+};

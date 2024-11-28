@@ -12,7 +12,7 @@ export interface IMovie {
 }
 
 export interface IRate {
-  id: null;
+  id: null | string;
   rating: number;
 }
 
@@ -22,6 +22,7 @@ export interface IAverage {
 }
 
 export interface IYourRate {
+    id: string;
     username: string;
     movieId: string;
     rating: number;
