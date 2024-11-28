@@ -10,7 +10,14 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../../Constants";
 import { useParams } from "react-router-dom";
-import { defaultMovie, defaultRate, IMovie, IRate, mockUser } from "./constants";
+import {
+  defaultMovie,
+  defaultRate,
+  IMovie,
+  IRate,
+  mockUser,
+} from "./constants";
+import DeleteRateButton from "../DeleteRateButton/DeleteRateButton";
 
 function Rate() {
   const { movieId } = useParams();
@@ -117,9 +124,9 @@ function Rate() {
       .then((response) => response.json())
       .then((json) => {
         console.info(json);
-          setRate(json);
-          setRating(json.rating);
-          setLiked(json.liked);
+        setRate(json);
+        setRating(json.rating);
+        setLiked(json.liked);
         setDiscussable(json.discussable);
       })
       .catch((error) => console.error(error));
@@ -227,6 +234,20 @@ function Rate() {
               Оценить
             </Button>
           </div>
+
+          {rate.id && (
+            <DeleteRateButton
+              rateId={rate.id}
+              onDeleteSuccess={() => {
+                console.log("onDelete  called in the parent");
+                setRate(defaultRate);
+                setRating(0);
+                setLiked(false);
+                setDiscussable(false);
+                navigate(`/rates/${movieId}`);
+              }}
+            />
+          )}
         </form>
       </div>
     </>

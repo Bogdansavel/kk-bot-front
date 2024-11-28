@@ -18,6 +18,7 @@
     "@mui/icons-material": "^6.1.6",
     "@mui/material": "^6.1.5",
     "flowbite-react": "^0.10.1",
+    "kk-bot-front": "file:",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.27.0",
