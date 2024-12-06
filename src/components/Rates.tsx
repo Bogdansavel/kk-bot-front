@@ -1,6 +1,6 @@
-import { useTelegram } from "../UseTelegram";
+import { useTelegram } from "./UseTelegram";
 import { useEffect, useState } from "react";
-import { BASE_URL } from "../../Constants";
+import { BASE_URL } from "../Constants";
 import { useParams, Link } from "react-router-dom";
 import Rating from "@mui/material/Rating";
 import StarBorder from "@mui/icons-material/StarBorder";
@@ -9,9 +9,9 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
 import RecordVoiceOverOutlinedIcon from "@mui/icons-material/RecordVoiceOverOutlined";
 import { useNavigate } from "react-router-dom";
-import { defaultAverage, defaultMovie, defaultYourRate } from "../constants";
-import { IMovie, IAverage, IYourRate } from "../interfaces";
-import DeleteRateButton from "../DeleteRateButton/DeleteRateButton";
+import { defaultAverage, defaultMovie, defaultYourRate } from "./constants";
+import { IMovie, IAverage, IYourRate } from "./interfaces";
+import DeleteRateButton from "./DeleteRateButton";
 
 function Rates() {
   const { movieId } = useParams();
@@ -127,7 +127,7 @@ function Rates() {
           to={"/rate/" + movieId}
           className="telegram-text"
         >
-          Изменить оценку
+          {yourRate.id ? "Изменить оценку" : "Оценить"}
         </Link>
       </div>
       {yourRate.id && (

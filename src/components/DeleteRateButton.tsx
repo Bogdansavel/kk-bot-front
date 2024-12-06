@@ -1,6 +1,5 @@
-import { Button } from "flowbite-react";
 import { Box } from "@mui/material";
-import { BASE_URL } from "../../Constants";
+import { BASE_URL } from "../Constants";
 
 interface DeleteRateButtonProps {
   rateId: string;
@@ -18,8 +17,7 @@ const DeleteRateButton = ({
         "Content-Type": "Application/JSON",
       },
     })
-      .then((response) => {
-        console.log("response from delete", response);
+      .then((response) => {        
         if (response.status === 200) {
           onDeleteSuccess();
         } else {
@@ -33,13 +31,15 @@ const DeleteRateButton = ({
 
   return (
     <Box className="flex justify-center">
-      <Button
-        gradientMonochrome="failure"
+      <button
         onClick={handleDelete}
-        className="px-1 mx-6 my-3"
+        style={{
+          color: "red",
+        }}
+        className="telegram-text"
       >
-        Удалить
-      </Button>
+        Удалить оценку
+      </button>
     </Box>
   );
 };

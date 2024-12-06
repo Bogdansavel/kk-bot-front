@@ -5,18 +5,17 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
 import RecordVoiceOverOutlinedIcon from "@mui/icons-material/RecordVoiceOverOutlined";
 import { Button } from "flowbite-react";
-import { useTelegram } from "../UseTelegram";
+import { useTelegram } from "./UseTelegram";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BASE_URL } from "../../Constants";
+import { BASE_URL } from "../Constants";
 import { useParams } from "react-router-dom";
 import {
   defaultMovie,
   defaultRate,
   mockUser,
-} from "../constants";
-import DeleteRateButton from "../DeleteRateButton/DeleteRateButton";
-import { IRate, IMovie } from "../interfaces";
+} from "./constants";
+import { IRate, IMovie } from "./interfaces";
 
 function Rate() {
   const { movieId } = useParams();
@@ -236,7 +235,7 @@ function Rate() {
             </Button>
           </div>
 
-          {rate.id && (
+       {/*    {rate.id && (
             <DeleteRateButton
               rateId={rate.id}
               onDeleteSuccess={() => {
@@ -248,7 +247,7 @@ function Rate() {
                 navigate(`/rates/${movieId}`);
               }}
             />
-          )}
+          )} */}
         </form>
       </div>
     </>
