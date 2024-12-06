@@ -17,8 +17,8 @@ function Rates() {
   const { movieId } = useParams();
   const navigate = useNavigate();
   const { webApp, executeMethod } = useTelegram();
-  //const { username } = webApp.initDataUnsafe?.user
-  const username = "test";
+  const { username } = webApp.initDataUnsafe?.user
+  //const username = "test";
 
   const [movie, setMovie] = useState<IMovie>(defaultMovie);
   const [average, setAverage] = useState<IAverage>(defaultAverage);

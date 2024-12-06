@@ -20,8 +20,8 @@ import { IRate, IMovie } from "./interfaces";
 function Rate() {
   const { movieId } = useParams();
   const { webApp, executeMethod } = useTelegram();
-  /* const { id, username, first_name } = webApp.initDataUnsafe?.user */
-  const { id, username, first_name } = mockUser;
+  const { id, username, first_name } = webApp.initDataUnsafe?.user;
+  //const { id, username, first_name } = mockUser;
 
   const [rate, setRate] = useState<IRate>(defaultRate);
   const [rating, setRating] = useState<number>(0);
