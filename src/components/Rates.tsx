@@ -32,14 +32,19 @@ function Rates() {
     );
   };
 
-  const trimName = (name: string) => {
-    if (name) {
-      if (name.length > 15) {
-        return name.substring(0, 12) + "...";
-      }
-    }
-    return name;
-  };
+    const trimName = (rating : any) => {
+        let name = rating.firstName;
+        if (name == null) {
+            name = rating.username;
+        }
+
+        if (name) {
+            if (name.length > 15) {
+                return name.substring(0, 12) + "..."
+            }
+        } 
+        return name;
+    };
 
   const fetchData = useCallback(() => {
     fetch(BASE_URL + `/rate/${movieId}/${username}`)
@@ -157,7 +162,7 @@ function Rates() {
                   href={`https://t.me/${rating.username}`}
                   className="align-middle underline"
                 >
-                  {trimName(rating.firstName)}
+                  {trimName(rating)}
                 </a>
                 :{" "}
               </label>
