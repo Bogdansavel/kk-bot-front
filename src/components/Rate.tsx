@@ -31,8 +31,6 @@ function Rate() {
 
   const navigate = useNavigate();
 
-  console.log("rate.id", rate.id);
-
   const handleLikeUnlike = async () => {
     executeMethod(
       "HapticFeedback.selectionChanged",
@@ -52,6 +50,7 @@ function Rate() {
   };
 
   const handleSubmit = (event: any) => {
+
     executeMethod(
       "HapticFeedback.impactOccurred",
       () => webApp.HapticFeedback.impactOccurred("heavy"),
@@ -234,20 +233,6 @@ function Rate() {
               Оценить
             </Button>
           </div>
-
-       {/*    {rate.id && (
-            <DeleteRateButton
-              rateId={rate.id}
-              onDeleteSuccess={() => {
-                console.log("onDelete  called in the parent");
-                setRate(defaultRate);
-                setRating(0);
-                setLiked(false);
-                setDiscussable(false);
-                navigate(`/rates/${movieId}`);
-              }}
-            />
-          )} */}
         </form>
       </div>
     </>
