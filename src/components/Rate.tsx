@@ -13,14 +13,14 @@ import { useParams } from "react-router-dom";
 import {
   defaultMovie,
   defaultRate,
-  mockUser,
+  //mockUser
 } from "./constants";
 import { IRate, IMovie } from "./interfaces";
 
 function Rate() {
   const { movieId } = useParams();
   const { webApp, executeMethod } = useTelegram();
-  const { id, username, first_name } = webApp.initDataUnsafe?.user;
+  const { username, first_name } = webApp.initDataUnsafe?.user;
   //const { id, username, first_name } = mockUser;
 
   const [rate, setRate] = useState<IRate>(defaultRate);
@@ -71,7 +71,7 @@ function Rate() {
       movieId: movieId,
       username: username,
       firstName: first_name,
-      telegramId: id,
+      telegramId: 0,
       liked: liked,
       discussable: discussable,
     };
@@ -97,7 +97,7 @@ function Rate() {
       id: rate.id,
       rating: rating,
       movieId: movieId,
-      telegramId: id,
+      telegramId: 0,
       username: username,
       firstName: first_name,
       liked: liked,

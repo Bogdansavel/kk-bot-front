@@ -158,7 +158,7 @@ function Rates() {
                   href={`https://t.me/${rating.username}`}
                   className="align-middle underline"
                 >
-                  {trimName(rating.firstName)}
+                  {trimName(rating)}
                 </a>
                 :{" "}
               </label>
