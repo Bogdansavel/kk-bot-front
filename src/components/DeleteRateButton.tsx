@@ -17,7 +17,7 @@ const DeleteRateButton = ({
         "Content-Type": "Application/JSON",
       },
     })
-      .then((response) => {        
+      .then((response) => {
         if (response.status === 200) {
           onDeleteSuccess();
         } else {

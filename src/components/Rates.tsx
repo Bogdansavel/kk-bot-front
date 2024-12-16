@@ -1,5 +1,5 @@
 import { useTelegram } from "./UseTelegram";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { BASE_URL } from "../Constants";
 import { useParams, Link } from "react-router-dom";
 import Rating from "@mui/material/Rating";
@@ -41,7 +41,7 @@ function Rates() {
     return name;
   };
 
-  useEffect(() => {
+  const fetchData = useCallback(() => {
     fetch(BASE_URL + `/rate/${movieId}/${username}`)
       .then((response) => {
         if (response.status == 404) {
@@ -72,6 +72,10 @@ function Rates() {
       })
       .catch((error) => console.error(error));
   }, [movieId, navigate, username]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   return (
     <>
@@ -136,7 +140,7 @@ function Rates() {
           onDeleteSuccess={() => {
             console.log("onDelete  called in the rates");
             setYourRate(defaultYourRate);
-            navigate(`/rates/${movieId}`);
+            fetchData();
           }}
         />
       )}

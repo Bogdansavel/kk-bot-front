@@ -10,11 +10,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../Constants";
 import { useParams } from "react-router-dom";
-import {
-  defaultMovie,
-  defaultRate,
-  mockUser,
-} from "./constants";
+import { defaultMovie, defaultRate, mockUser } from "./constants";
 import { IRate, IMovie } from "./interfaces";
 
 function Rate() {
@@ -30,8 +26,6 @@ function Rate() {
   const [movie, setMovie] = useState<IMovie>(defaultMovie);
 
   const navigate = useNavigate();
-
-  console.log("rate.id", rate.id);
 
   const handleLikeUnlike = async () => {
     executeMethod(
@@ -52,6 +46,7 @@ function Rate() {
   };
 
   const handleSubmit = (event: any) => {
+    
     executeMethod(
       "HapticFeedback.impactOccurred",
       () => webApp.HapticFeedback.impactOccurred("heavy"),
@@ -234,20 +229,6 @@ function Rate() {
               Оценить
             </Button>
           </div>
-
-       {/*    {rate.id && (
-            <DeleteRateButton
-              rateId={rate.id}
-              onDeleteSuccess={() => {
-                console.log("onDelete  called in the parent");
-                setRate(defaultRate);
-                setRating(0);
-                setLiked(false);
-                setDiscussable(false);
-                navigate(`/rates/${movieId}`);
-              }}
-            />
-          )} */}
         </form>
       </div>
     </>
