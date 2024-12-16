@@ -13,7 +13,13 @@ const DeleteRateButton = ({
 }: DeleteRateButtonProps) => {
   const { webApp, executeMethod } = useTelegram();
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
+    executeMethod(
+      "HapticFeedback.notificationOccurred",
+      () => webApp.HapticFeedback.notificationOccurred("error"),
+      true
+    );
+
     fetch(`${BASE_URL}/rate/${rateId}`, {
       method: "DELETE",
       headers: {
@@ -22,11 +28,6 @@ const DeleteRateButton = ({
     })
       .then((response) => {
         if (response.status === 200) {
-          executeMethod(
-            "HapticFeedback.notificationOccurred",
-            webApp.HapticFeedback.notificationOccurred("error"),
-            true
-          );
           onDeleteSuccess();
         } else {
           console.error(
