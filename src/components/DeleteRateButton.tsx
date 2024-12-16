@@ -1,5 +1,6 @@
 import { Box } from "@mui/material";
 import { BASE_URL } from "../Constants";
+import { useTelegram } from "./UseTelegram";
 
 interface DeleteRateButtonProps {
   rateId: string;
@@ -10,6 +11,8 @@ const DeleteRateButton = ({
   rateId,
   onDeleteSuccess,
 }: DeleteRateButtonProps) => {
+  const { webApp, executeMethod } = useTelegram();
+
   const handleDelete = () => {
     fetch(`${BASE_URL}/rate/${rateId}`, {
       method: "DELETE",
@@ -19,6 +22,11 @@ const DeleteRateButton = ({
     })
       .then((response) => {
         if (response.status === 200) {
+          executeMethod(
+            "HapticFeedback.notificationOccurred",
+            webApp.HapticFeedback.notificationOccurred("error"),
+            true
+          );
           onDeleteSuccess();
         } else {
           console.error(
