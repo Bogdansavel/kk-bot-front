@@ -43,7 +43,7 @@ const DeleteRateButton = ({
       <button
         onClick={handleDelete}
         style={{
-          color: "red",
+          color: "#d32f2f",
         }}
         className="telegram-text"
       >
