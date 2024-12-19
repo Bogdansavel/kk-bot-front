@@ -1,6 +1,6 @@
 import { useTelegram } from "./UseTelegram";
 import { useEffect, useState, useCallback } from "react";
-import { BASE_URL } from "../Constants";
+import { BASE_URL, isDev } from "../Constants";
 import { useParams, Link } from "react-router-dom";
 import Rating from "@mui/material/Rating";
 import StarBorder from "@mui/icons-material/StarBorder";
@@ -17,7 +17,9 @@ function Rates() {
   const { movieId } = useParams();
   const navigate = useNavigate();
   const { webApp, executeMethod } = useTelegram();
-  const { username } = webApp.initDataUnsafe?.user
+  const { username } = isDev
+    ? { username: "test" }
+    : webApp.initDataUnsafe?.user;
   //const username = "test";
 
   const [movie, setMovie] = useState<IMovie>(defaultMovie);
@@ -32,19 +34,19 @@ function Rates() {
     );
   };
 
-    const trimName = (rating : any) => {
-        let name = rating.firstName;
-        if (name == null) {
-            name = rating.username;
-        }
+  const trimName = (rating: any) => {
+    let name = rating.firstName;
+    if (name == null) {
+      name = rating.username;
+    }
 
-        if (name) {
-            if (name.length > 15) {
-                return name.substring(0, 12) + "..."
-            }
-        } 
-        return name;
-    };
+    if (name) {
+      if (name.length > 15) {
+        return name.substring(0, 12) + "...";
+      }
+    }
+    return name;
+  };
 
   const fetchData = useCallback(() => {
     fetch(BASE_URL + `/rate/${movieId}/${username}`)
@@ -96,10 +98,8 @@ function Rates() {
           {average.rating / 10}
         </label>
       </div>
-      <div className="flex justify-center pb-2">
-        <label className="opacity-50 telegram-text align-middle">
-          Моя оценка:{" "}
-        </label>
+      <div className="flex items-center justify-center pb-2">
+        <label className="opacity-50 telegram-text ">Моя оценка: </label>
         <Rating
           className="pl-1"
           emptyIcon={<StarBorder fontSize="inherit" htmlColor="#ffa726" />}
@@ -111,22 +111,16 @@ function Rates() {
         />
         <div>
           {yourRate.liked ? (
-            <FavoriteIcon color="error" className="align-middle ml-1" />
+            <FavoriteIcon color="error" className=" ml-1" />
           ) : (
-            <FavoriteBorderIcon color="error" className="align-middle ml-1" />
+            <FavoriteBorderIcon color="error" className=" ml-1" />
           )}
         </div>
         <div>
           {yourRate.discussable ? (
-            <RecordVoiceOverIcon
-              color="primary"
-              className="align-middle ml-1"
-            />
+            <RecordVoiceOverIcon color="primary" className=" ml-1" />
           ) : (
-            <RecordVoiceOverOutlinedIcon
-              color="primary"
-              className="align-middle ml-1"
-            />
+            <RecordVoiceOverOutlinedIcon color="primary" className=" ml-1" />
           )}
         </div>
       </div>
@@ -143,7 +137,6 @@ function Rates() {
         <DeleteRateButton
           rateId={yourRate.id}
           onDeleteSuccess={() => {
-            console.log("onDelete  called in the rates");
             setYourRate(defaultYourRate);
             fetchData();
           }}
@@ -156,7 +149,7 @@ function Rates() {
         .filter((r: any) => r.username != username)
         .map((rating: any) => (
           <div className="flex justify-center">
-            <div className="flex align-middle justify-center m-2 p-2 border-solid rounded-2xl border-2 telegram-border telegram-text align-middle">
+            <div className="flex items-center  justify-center m-2 p-2 border-solid rounded-2xl border-2 telegram-border telegram-text align-middle">
               <label className="opacity-50 telegram-text px-2">
                 <a
                   href={`https://t.me/${rating.username}`}
@@ -176,14 +169,9 @@ function Rates() {
                 size="large"
                 readOnly
               />
-              {rating.liked && (
-                <FavoriteIcon color="error" className="align-middle ml-1" />
-              )}
+              {rating.liked && <FavoriteIcon color="error" className=" ml-1" />}
               {rating.discussable && (
-                <RecordVoiceOverIcon
-                  color="primary"
-                  className="align-middle ml-1"
-                />
+                <RecordVoiceOverIcon color="primary" className=" ml-1" />
               )}
             </div>
           </div>

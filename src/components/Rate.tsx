@@ -8,19 +8,17 @@ import { Button } from "flowbite-react";
 import { useTelegram } from "./UseTelegram";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BASE_URL } from "../Constants";
+import { BASE_URL, isDev } from "../Constants";
 import { useParams } from "react-router-dom";
-import {
-  defaultMovie,
-  defaultRate,
-  //mockUser
-} from "./constants";
+import { defaultMovie, defaultRate, mockUser } from "./constants";
 import { IRate, IMovie } from "./interfaces";
 
 function Rate() {
   const { movieId } = useParams();
   const { webApp, executeMethod } = useTelegram();
-  const { username, first_name } = webApp.initDataUnsafe?.user;
+  const { username, first_name } = isDev
+    ? mockUser
+    : webApp.initDataUnsafe?.user;
   //const { id, username, first_name } = mockUser;
 
   const [rate, setRate] = useState<IRate>(defaultRate);
@@ -50,7 +48,6 @@ function Rate() {
   };
 
   const handleSubmit = (event: any) => {
-
     executeMethod(
       "HapticFeedback.impactOccurred",
       () => webApp.HapticFeedback.impactOccurred("heavy"),
