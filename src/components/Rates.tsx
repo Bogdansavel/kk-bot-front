@@ -26,6 +26,11 @@ function Rates() {
   const [movie, setMovie] = useState<IMovie>(defaultMovie);
   const [average, setAverage] = useState<IAverage>(defaultAverage);
   const [yourRate, setYourRate] = useState<IYourRate>(defaultYourRate);
+  const [maxCardWidth, setMaxCardWidth] = useState<number>(0);
+
+  const measureMaxWidth = (width: number) => {
+    setMaxCardWidth((prevMax) => Math.max(prevMax, width));
+  };
 
   const handleClick = async () => {
     executeMethod(
@@ -135,7 +140,12 @@ function Rates() {
       {movie.ratings
         .filter((r: IRating) => r.username != username)
         .map((rating: IRating) => (
-          <RatingCard key={rating.id} rating={rating} />
+          <RatingCard
+            key={rating.id}
+            rating={rating}
+            maxCardWidth={maxCardWidth}
+            onCardRendered={measureMaxWidth}
+          />
         ))}
     </>
   );
