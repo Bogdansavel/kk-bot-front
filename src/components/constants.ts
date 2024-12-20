@@ -10,11 +10,12 @@ export const defaultMovie: IMovie = {
   id: "",
   kinopoiskId: 0,
   name: "",
+  photoName: null,
   ratings: [],
 };
 
 export const defaultRate: IRate = {
-  id: null ,
+  id: null,
   rating: 0,
 };
 
