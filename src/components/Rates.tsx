@@ -1,28 +1,39 @@
 import { useTelegram } from "./UseTelegram";
 import { useEffect, useState, useCallback } from "react";
-import { BASE_URL } from "../Constants";
+import { BASE_URL, isDev } from "../Constants";
 import { useParams, Link } from "react-router-dom";
-import Rating from "@mui/material/Rating";
-import StarBorder from "@mui/icons-material/StarBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
-import RecordVoiceOverOutlinedIcon from "@mui/icons-material/RecordVoiceOverOutlined";
 import { useNavigate } from "react-router-dom";
 import { defaultAverage, defaultMovie, defaultYourRate } from "./constants";
-import { IMovie, IAverage, IYourRate } from "./interfaces";
+import { IMovie, IAverage, IYourRate, IRating } from "./interfaces";
 import DeleteRateButton from "./DeleteRateButton";
+import RatingCard from "./RatingCard";
+import OwnRatingCardProps from "./OwnRatingCard";
 
 function Rates() {
   const { movieId } = useParams();
   const navigate = useNavigate();
   const { webApp, executeMethod } = useTelegram();
-  const { username } = webApp.initDataUnsafe?.user
+  const { username } = isDev
+    ? { username: "test" }
+    : webApp.initDataUnsafe?.user;
   //const username = "test";
 
   const [movie, setMovie] = useState<IMovie>(defaultMovie);
   const [average, setAverage] = useState<IAverage>(defaultAverage);
   const [yourRate, setYourRate] = useState<IYourRate>(defaultYourRate);
+  const [maxCardWidth, setMaxCardWidth] = useState<number>(0);
+  const [maxNameWidth, setMaxNameWidth] = useState<number>(0);
+  const [maxLikeDiscWidth, setMaxLikeDiscWidth] = useState<number>(0);
+
+  const measureMaxWidth = (
+    generalWidth: number,
+    nameWidth: number,
+    likeDiscWidth: number
+  ) => {
+    setMaxCardWidth((prevMax) => Math.max(prevMax, generalWidth));
+    setMaxNameWidth((prevMax) => Math.max(prevMax, nameWidth));
+    setMaxLikeDiscWidth((prevMax) => Math.max(prevMax, likeDiscWidth));
+  };
 
   const handleClick = async () => {
     executeMethod(
@@ -31,20 +42,6 @@ function Rates() {
       true
     );
   };
-
-    const trimName = (rating : any) => {
-        let name = rating.firstName;
-        if (name == null) {
-            name = rating.username;
-        }
-
-        if (name) {
-            if (name.length > 15) {
-                return name.substring(0, 12) + "..."
-            }
-        } 
-        return name;
-    };
 
   const fetchData = useCallback(() => {
     fetch(BASE_URL + `/rate/${movieId}/${username}`)
@@ -96,40 +93,7 @@ function Rates() {
           {average.rating / 10}
         </label>
       </div>
-      <div className="flex justify-center pb-2">
-        <label className="opacity-50 telegram-text align-middle">
-          Моя оценка:{" "}
-        </label>
-        <Rating
-          className="pl-1"
-          emptyIcon={<StarBorder fontSize="inherit" htmlColor="#ffa726" />}
-          name="half-rating"
-          value={yourRate.rating / 10}
-          precision={0.5}
-          size="large"
-          readOnly
-        />
-        <div>
-          {yourRate.liked ? (
-            <FavoriteIcon color="error" className="align-middle ml-1" />
-          ) : (
-            <FavoriteBorderIcon color="error" className="align-middle ml-1" />
-          )}
-        </div>
-        <div>
-          {yourRate.discussable ? (
-            <RecordVoiceOverIcon
-              color="primary"
-              className="align-middle ml-1"
-            />
-          ) : (
-            <RecordVoiceOverOutlinedIcon
-              color="primary"
-              className="align-middle ml-1"
-            />
-          )}
-        </div>
-      </div>
+      <OwnRatingCardProps yourRate={yourRate} />
       <div className="flex justify-center pb-1">
         <Link
           onClick={handleClick}
@@ -143,7 +107,6 @@ function Rates() {
         <DeleteRateButton
           rateId={yourRate.id}
           onDeleteSuccess={() => {
-            console.log("onDelete  called in the rates");
             setYourRate(defaultYourRate);
             fetchData();
           }}
@@ -153,40 +116,14 @@ function Rates() {
         <label className="opacity-50 telegram-text">Оценки участников:</label>
       </div>
       {movie.ratings
-        .filter((r: any) => r.username != username)
-        .map((rating: any) => (
-          <div className="flex justify-center">
-            <div className="flex align-middle justify-center m-2 p-2 border-solid rounded-2xl border-2 telegram-border telegram-text align-middle">
-              <label className="opacity-50 telegram-text px-2">
-                <a
-                  href={`https://t.me/${rating.username}`}
-                  className="align-middle underline"
-                >
-                  {trimName(rating)}
-                </a>
-                :{" "}
-              </label>
-              <Rating
-                emptyIcon={
-                  <StarBorder fontSize="inherit" htmlColor="#ffa726" />
-                }
-                name="half-rating"
-                value={rating.rating / 10}
-                precision={0.5}
-                size="large"
-                readOnly
-              />
-              {rating.liked && (
-                <FavoriteIcon color="error" className="align-middle ml-1" />
-              )}
-              {rating.discussable && (
-                <RecordVoiceOverIcon
-                  color="primary"
-                  className="align-middle ml-1"
-                />
-              )}
-            </div>
-          </div>
+        .filter((r: IRating) => r.username != username)
+        .map((rating: IRating) => (
+          <RatingCard
+            key={rating.id}
+            rating={rating}
+            elemWidth={{ maxCardWidth, maxNameWidth, maxLikeDiscWidth }}
+            onCardRendered={measureMaxWidth}
+          />
         ))}
     </>
   );
