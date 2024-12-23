@@ -2,17 +2,12 @@ import { useTelegram } from "./UseTelegram";
 import { useEffect, useState, useCallback } from "react";
 import { BASE_URL, isDev } from "../Constants";
 import { useParams, Link } from "react-router-dom";
-import Rating from "@mui/material/Rating";
-import StarBorder from "@mui/icons-material/StarBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
-import RecordVoiceOverOutlinedIcon from "@mui/icons-material/RecordVoiceOverOutlined";
 import { useNavigate } from "react-router-dom";
 import { defaultAverage, defaultMovie, defaultYourRate } from "./constants";
 import { IMovie, IAverage, IYourRate, IRating } from "./interfaces";
 import DeleteRateButton from "./DeleteRateButton";
 import RatingCard from "./RatingCard";
+import OwnRatingCardProps from "./OwnRatingCard";
 
 function Rates() {
   const { movieId } = useParams();
@@ -98,32 +93,7 @@ function Rates() {
           {average.rating / 10}
         </label>
       </div>
-      <div className="flex items-center justify-center pb-2">
-        <label className="opacity-50 telegram-text ">Моя оценка: </label>
-        <Rating
-          className="pl-1"
-          emptyIcon={<StarBorder fontSize="inherit" htmlColor="#ffa726" />}
-          name="half-rating"
-          value={yourRate.rating / 10}
-          precision={0.5}
-          size="large"
-          readOnly
-        />
-        <div>
-          {yourRate.liked ? (
-            <FavoriteIcon color="error" className=" ml-1" />
-          ) : (
-            <FavoriteBorderIcon color="error" className=" ml-1" />
-          )}
-        </div>
-        <div>
-          {yourRate.discussable ? (
-            <RecordVoiceOverIcon color="primary" className=" ml-1" />
-          ) : (
-            <RecordVoiceOverOutlinedIcon color="primary" className=" ml-1" />
-          )}
-        </div>
-      </div>
+      <OwnRatingCardProps yourRate={yourRate} />
       <div className="flex justify-center pb-1">
         <Link
           onClick={handleClick}
