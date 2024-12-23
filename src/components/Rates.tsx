@@ -27,9 +27,17 @@ function Rates() {
   const [average, setAverage] = useState<IAverage>(defaultAverage);
   const [yourRate, setYourRate] = useState<IYourRate>(defaultYourRate);
   const [maxCardWidth, setMaxCardWidth] = useState<number>(0);
+  const [maxNameWidth, setMaxNameWidth] = useState<number>(0);
+  const [maxLikeDiscWidth, setMaxLikeDiscWidth] = useState<number>(0);
 
-  const measureMaxWidth = (width: number) => {
-    setMaxCardWidth((prevMax) => Math.max(prevMax, width));
+  const measureMaxWidth = (
+    generalWidth: number,
+    nameWidth: number,
+    likeDiscWidth: number
+  ) => {
+    setMaxCardWidth((prevMax) => Math.max(prevMax, generalWidth));
+    setMaxNameWidth((prevMax) => Math.max(prevMax, nameWidth));
+    setMaxLikeDiscWidth((prevMax) => Math.max(prevMax, likeDiscWidth));
   };
 
   const handleClick = async () => {
@@ -143,7 +151,7 @@ function Rates() {
           <RatingCard
             key={rating.id}
             rating={rating}
-            maxCardWidth={maxCardWidth}
+            elemWidth={{ maxCardWidth, maxNameWidth, maxLikeDiscWidth }}
             onCardRendered={measureMaxWidth}
           />
         ))}

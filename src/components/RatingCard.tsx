@@ -7,21 +7,29 @@ import { useRef, useEffect } from "react";
 
 interface RatingCardProps {
   rating: IRating;
-  onCardRendered: (width: number) => void;
-  maxCardWidth: number;
+  onCardRendered: (
+    generalWidth: number,
+    nameWidth: number,
+    likeDiscWidth: number
+  ) => void;
+  elemWidth: {
+    maxCardWidth: number;
+    maxNameWidth: number;
+    maxLikeDiscWidth: number;
+  };
 }
 
-const RatingCard = ({
-  rating,
-  onCardRendered,
-  maxCardWidth,
-}: RatingCardProps) => {
+const RatingCard = ({ rating, onCardRendered, elemWidth }: RatingCardProps) => {
   const cardRef = useRef<HTMLDivElement>(null);
+  const nameRef = useRef<HTMLLabelElement>(null);
+  const likeDiscRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (cardRef.current) {
-      const width = cardRef.current.offsetWidth;
-      onCardRendered(width);
+    if (cardRef.current && nameRef.current && likeDiscRef.current) {
+      const generalWidth = cardRef.current.offsetWidth;
+      const nameWidth = nameRef.current.offsetWidth;
+      const likeDiscWidth = likeDiscRef.current.offsetWidth;
+      onCardRendered(generalWidth, nameWidth, likeDiscWidth);
     }
   }, [onCardRendered, rating]);
 
@@ -45,10 +53,20 @@ const RatingCard = ({
         ref={cardRef}
         className="flex items-center justify-center m-2 p-2 border-solid rounded-2xl border-2 telegram-border telegram-text align-middle"
         style={{
-          width: maxCardWidth > 0 ? `${maxCardWidth}px` : "auto",
+          width:
+            elemWidth.maxCardWidth > 0 ? `${elemWidth.maxCardWidth}px` : "auto",
         }}
       >
-        <label className="opacity-50 telegram-text px-2">
+        <label
+          ref={nameRef}
+          style={{
+            width:
+              elemWidth.maxNameWidth > 0
+                ? `${elemWidth.maxNameWidth}px`
+                : "auto",
+          }}
+          className="opacity-50 telegram-text px-2"
+        >
           <a
             href={`https://t.me/${rating.username}`}
             className="align-middle underline"
@@ -65,10 +83,22 @@ const RatingCard = ({
           size="large"
           readOnly
         />
-        {rating.liked && <FavoriteIcon color="error" className="ml-1" />}
-        {rating.discussable && (
-          <RecordVoiceOverIcon color="primary" className="ml-1" />
-        )}
+        <div
+          className="flex items-center justify-center"
+          ref={likeDiscRef}
+          style={{
+            width:
+              elemWidth.maxLikeDiscWidth > 0
+                ? `${elemWidth.maxLikeDiscWidth}px`
+                : "auto",
+          }}
+        >
+          {rating.liked && <FavoriteIcon color="error" className="ml-1" />}
+
+          {rating.discussable && (
+            <RecordVoiceOverIcon color="primary" className="ml-1" />
+          )}
+        </div>
       </div>
     </div>
   );
