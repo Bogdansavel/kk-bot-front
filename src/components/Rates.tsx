@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { defaultAverage, defaultMovie, defaultYourRate } from "./constants";
 import { IMovie, IAverage, IYourRate } from "./interfaces";
 import DeleteRateButton from "./DeleteRateButton";
+import { Button } from "flowbite-react";
 
 function Rates() {
   const { movieId } = useParams();
@@ -48,12 +49,6 @@ function Rates() {
 
   const fetchData = useCallback(() => {
     fetch(BASE_URL + `/rate/${movieId}/${username}`)
-      .then((response) => {
-        if (response.status == 404) {
-          navigate("/rate/" + movieId);
-        }
-        return response;
-      })
       .then((response) => response.json())
       .then((json) => {
         console.info(json);
@@ -96,54 +91,71 @@ function Rates() {
           {average.rating / 10}
         </label>
       </div>
-      <div className="flex justify-center pb-2">
-        <label className="opacity-50 telegram-text align-middle">
-          Моя оценка:{" "}
-        </label>
-        <Rating
-          className="pl-1"
-          emptyIcon={<StarBorder fontSize="inherit" htmlColor="#ffa726" />}
-          name="half-rating"
-          value={yourRate.rating / 10}
-          precision={0.5}
-          size="large"
-          readOnly
-        />
-        <div>
-          {yourRate.liked ? (
-            <FavoriteIcon color="error" className="align-middle ml-1" />
-          ) : (
-            <FavoriteBorderIcon color="error" className="align-middle ml-1" />
-          )}
+      {yourRate.id.length == 0 &&
+        <Link to={`/rate/${movieId}`}>
+          <div className="flex justify-center">
+            <Button
+              type="submit"
+              color="yellow"
+              className="telegram-bg telegram-text"
+            >
+              Оценить
+            </Button>
+          </div>
+        </Link>
+      }
+      {yourRate.id.length > 0 &&
+        <div className="flex justify-center pb-2">
+          <label className="opacity-50 telegram-text align-middle">
+            Моя оценка:{" "}
+          </label>
+          <Rating
+            className="pl-1"
+            emptyIcon={<StarBorder fontSize="inherit" htmlColor="#ffa726" />}
+            name="half-rating"
+            value={yourRate.rating / 10}
+            precision={0.5}
+            size="large"
+            readOnly
+          />
+          <div>
+            {yourRate.liked ? (
+              <FavoriteIcon color="error" className="align-middle ml-1" />
+            ) : (
+              <FavoriteBorderIcon color="error" className="align-middle ml-1" />
+            )}
+          </div>
+          <div>
+            {yourRate.discussable ? (
+              <RecordVoiceOverIcon
+                color="primary"
+                className="align-middle ml-1"
+              />
+            ) : (
+              <RecordVoiceOverOutlinedIcon
+                color="primary"
+                className="align-middle ml-1"
+              />
+            )}
+          </div>
         </div>
-        <div>
-          {yourRate.discussable ? (
-            <RecordVoiceOverIcon
-              color="primary"
-              className="align-middle ml-1"
-            />
-          ) : (
-            <RecordVoiceOverOutlinedIcon
-              color="primary"
-              className="align-middle ml-1"
-            />
-          )}
-        </div>
-      </div>
+      }
+      {yourRate.id && (
       <div className="flex justify-center pb-1">
         <Link
           onClick={handleClick}
           to={"/rate/" + movieId}
           className="telegram-text"
         >
-          {yourRate.id ? "Изменить оценку" : "Оценить"}
+          Изменить оценку
         </Link>
       </div>
+      )}
       {yourRate.id && (
         <DeleteRateButton
           rateId={yourRate.id}
           onDeleteSuccess={() => {
-            console.log("onDelete  called in the rates");
+            console.log("onDelete called in the rates");
             setYourRate(defaultYourRate);
             fetchData();
           }}
