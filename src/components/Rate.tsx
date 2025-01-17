@@ -9,7 +9,7 @@ import { useTelegram } from "./UseTelegram";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../Constants";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import {
   defaultMovie,
   defaultRate,
@@ -141,6 +141,7 @@ function Rate() {
 
   return (
     <>
+      <Link to="/movies" className="p-4 telegram-text">&lt; К списку всех фильмов</Link>
       <div className="flex justify-center items-center">
         <form onSubmit={handleSubmit}>
           <div className="flex justify-center pb-2">

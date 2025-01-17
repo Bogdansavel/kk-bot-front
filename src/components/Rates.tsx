@@ -79,6 +79,7 @@ function Rates() {
 
   return (
     <>
+      <Link to="/movies" className="p-4 telegram-text">&lt; К списку всех фильмов</Link>
       <div className="flex justify-center pb-2">
         <label className="telegram-text text-center text-2xl">
           Средняя оценка фильма
@@ -162,7 +163,7 @@ function Rates() {
         />
       )}
       <div className="flex justify-center mt-8">
-        <label className="opacity-50 telegram-text">Оценки участников:</label>
+        <label className="opacity-50 telegram-text">Оценки участников ({movie.ratings.length}):</label>
       </div>
       {movie.ratings
         .filter((r: any) => r.username != username)
