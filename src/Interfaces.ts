@@ -19,6 +19,7 @@ export interface IMovie {
   posterUrl: string;
   averageRating: number;
   member: IMember;
+  kinopoiskData: string;
 }
 
 export class Event {
@@ -67,4 +68,5 @@ export interface IYourRate {
     rating: number;
     liked: boolean;
     discussable: boolean;
+    comment: string;
 }

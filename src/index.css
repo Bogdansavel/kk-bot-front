@@ -1,3 +1,5 @@
+@import "vars.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -14,6 +16,61 @@ body {
     border-color: var(--tg-theme-text-color);
 }
 
+.telegram-accent-border {
+    border-color: var(--tg-theme-accent-text-color);
+}
+
 .telegram-bg {
     background-color: var(--tg-theme-bg-color);
+}
+
+.link-text {
+    color: var(--tg-theme-link-color);
+}
+
+.button:hover {
+    background-color: color-mix(in srgb, var(--tg-theme-button-color), var(--tg-theme-bg-color) 20%);
+}
+
+.secondary-button:hover {
+    background-color: color-mix(in srgb, var(--tg-theme-button-color), var(--tg-theme-bg-color) 90%);
+}
+
+.button {
+    color: var(--tg-theme-bg-color);
+    background-color: var(--tg-theme-button-color);
+    border-radius: 40px;
+    font-weight: bold;
+    padding: 8px 16px 8px 16px;
+}
+
+.secondary-button {
+    background-color: color-mix(in srgb, var(--tg-theme-button-color), var(--tg-theme-bg-color) 80%);
+    color: var(--tg-theme-button-color);
+}
+
+.clear {
+    padding: 8px 16px 8px 16px;
+    color: var(--tg-theme-text-color);
+}
+
+.secondary-bg {
+    background-color: var(--tg-theme-secondary-bg-color);
+}
+
+.focused.commentInput {
+    border-style: solid;
+    border-color: var(--tg-theme-link-color);
+    color: var(--tg-theme-text-color)
+}
+
+.empty.commentInput {
+    color: grey;
+    opacity: 0.5;
+}
+
+.commentInput {
+    border-radius: 10px;
+    width: 100%;
+    resize: none;
 }

@@ -1,0 +1,7 @@
+* {
+    --tg-theme-text-color: white;
+    --tg-theme-bg-color: black;
+    --tg-theme-secondary-bg-color: rgb(51, 47, 47);
+    --tg-theme-button-color: rgb(106, 60, 159);
+    --tg-theme-accent-text-color: rgb(106, 60, 159);
+}

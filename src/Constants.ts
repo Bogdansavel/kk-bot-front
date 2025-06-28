@@ -1,7 +1,9 @@
-import { IAverage, IMember, IMovie, IRate, IUser, IYourRate } from "./interfaces";
+import { IAverage, IMember, IMovie, IRate, IUser, IYourRate } from "./Interfaces";
+
+export const BASE_URL = import.meta.env.VITE_BACKEND_BASE_URL
 
 export const mockUser: IUser = {
-  username: "test",
+  username: "fanboyDan",
   first_name: "test",
   id: 0,
 };
@@ -43,4 +45,17 @@ export const defaultYourRate: IYourRate = {
   rating: 0,
   liked: false,
   discussable: false,
+  comment: ""
+};
+
+export function ratesCountLable(count : number) {
+  if (count == 1) {
+      return "оценка";
+  }
+
+  if (count < 5) {
+      return "оценки";
+  }
+
+  return "оценок";
 };

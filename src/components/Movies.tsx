@@ -1,15 +1,15 @@
-import { useTelegram } from "./UseTelegram";
-import { useEffect, useState, useCallback } from "react";
-import { BASE_URL } from "../Constants";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button } from "flowbite-react";
-import { Event, IMember, IRate } from ".//interfaces";
+import { Event, IMember, IRate } from "../Interfaces";
 import Rating from "@mui/material/Rating";
 import StarBorder from "@mui/icons-material/StarBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
-import CircularProgress from '@mui/material/CircularProgress';
+import LinearProgress from '@mui/material/LinearProgress';
 import Fade from '@mui/material/Fade';
+import { ratesCountLable, mockUser, BASE_URL } from "../Constants"
+import { Box } from "@mui/material";
+import { useTelegram } from "./UseTelegram";
 
 const monthes = new Map();
 monthes.set(1, "Январь");
@@ -42,9 +42,13 @@ monthes2.set(12, "декабря");
 function Movies() {
     const [events, setEvents] = useState<Event[]>([]);
     const [loading, setLoading] = useState(true);
-    const { webApp } = useTelegram();
-    const { username } = webApp.initDataUnsafe?.user
-    //const username = "fanboyDan"
+    const { username } = useTelegram().webApp.initDataUnsafe?.user ?? mockUser
+    const [page, setPage] = useState(0);
+
+    const loadMore = () => {
+        fetchData(page + 1);
+        setPage(page + 1);
+    }
 
     const trimName = (member : IMember) => {
         let name = member.firstName;
@@ -60,96 +64,61 @@ function Movies() {
         return name;
     };
 
-    const fetchData = useCallback(() => {
-        fetch(BASE_URL + `/event/movies`)
+    const fetchData = (page:number) => {
+        fetch(BASE_URL + `/event/movies?pageNumber=${page}&pageSize=10`)
           .then((response) => response.json())
           .then((json) => {
             console.info(json);
             setLoading(false);
-            let objs = json.map((obj: Event) => {
+            const objs = json.map((obj: Event) => {
                 return new Event(obj.movie, obj.language, obj.date, obj.members);
             })
-            objs.sort((a: Event, b: Event) => {
-                if (a.getYear() < b.getYear()) return 1;
-                else {
-                    if (a.getYear() > b.getYear()) return -1;
-                    else {
-                        if (a.getMonth() < b.getMonth()) return 1;
-                        else {
-                            if (a.getMonth() > b.getMonth()) return -1;
-                            else {
-                                if (a.getDay() < b.getDay()) return 1;
-                                else {
-                                    if (a.getDay() > b.getDay()) return -1;
-                                    else {
-                                        return 0;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            setEvents(objs);
+            if (page === 0) {
+                setEvents(objs);
+            } else {
+                setEvents([...events, ...objs])
+            }
           })
           .catch((error) => console.error(error));
-    }, []);
+    };
 
     useEffect(() => {
-        fetchData();
-    }, [fetchData]);
-
-    let year = 0;
-    let showYear = false;
-    let month = 0;
-    let showMonth = false;
+        fetchData(0);
+    }, []);
 
     return (
         <>
-            <div className="flex items-center justify-center m-4">
-                <Fade
-                    in={loading}
-                    unmountOnExit
-                    >
-                    <CircularProgress />
-                </Fade>
-                <Link to="/wrapped" className="p-4 telegram-text">
-                <div className="rounded-2xl bg-gradient-to-b from-red-500 to-transparent telegram-text p-10">
-                    ИТОГИ ГОДА!
+            <div className="flex justify-center pt-4 w-full">
+                {false && (
+                    <div>
+                    <Link to="/wrapped">
+                        <div className="telegram-bg telegram-text p-3 rounded-2xl border-2 border-indigo-500/100">
+                            ИТОГИ ГОДА!
+                        </div>
+                    </Link>
+                    </div>
+                )}
+                <div>
+                    <Fade
+                        in={loading}
+                        unmountOnExit
+                        >
+                        <Box sx={{ width: '100%' }}>
+                            <LinearProgress />
+                        </Box>
+                    </Fade>
                 </div>
-            </Link>
             </div>
+            <Fade in={!loading}>
+            <div>
             {events.map((event: Event) => {
             let yourRate = null;
-            let youRates = event.movie.ratings.filter((rating: IRate) => rating.username == username);
+            const youRates = event.movie.ratings.filter((rating: IRate) => rating.username == username);
             if (youRates.length > 0) {
                 yourRate = youRates[0];
             }
-
-            if (event.getYear() != year) {
-                year = event.getYear();
-                showYear = true;
-            } else {
-                showYear = false;
-            }
-
-            if (event.getMonth() != month) {
-                month = event.getMonth();
-                showMonth = true;
-            } else {
-                showMonth = false;
-            }
             return (
-                <div>
-                    <div className="grid justify-left p-4 telegram-text">
-                            {showYear && (
-                                <div className="text-2xl w-full">{year}</div>
-                            )}
-                            {showMonth && (
-                                <div className="text-xl w-full">{monthes.get(month)}</div>
-                            )}
-                    </div>
-                    <div className="flex justify-center">
+                <div className="flex justify-center">
                             <div>
                                 <div className="grid grid-cols-3 p-4 telegram-text">
                                     <img className="col-start-1 object-contain h-48 pr-4" src={event.movie.posterUrl} />
@@ -182,43 +151,39 @@ function Movies() {
                                                 </div>
                                             </div>
                                         }
-                                        <div className="text-2xl mt-2">{event.movie.averageRating / 10}</div><div className="opacity-50">({event.movie.ratings.length} оценок)</div>
+                                        <div className="text-2xl mt-2">{event.movie.averageRating / 10}</div><div className="opacity-50">({event.movie.ratings.length} {ratesCountLable(event.movie.ratings.length)})</div>
                                         {event.movie.member && ( 
-                                            <div>Предложил: <a
+                                            <div>От: <a
                                             href={`https://t.me/${event.movie.member.username}`}
-                                            className="align-middle underline"
+                                            className="align-middle link-text"
                                             >
                                             {trimName(event.movie.member)}
                                             </a></div>
-                                        )}<br/>
-                                        <div className="flex gap-2">
+                                        )}
+                                        <div className="flex gap-2 pt-4">
                                             <Link to={`/rate/${event.movie.id}`}>
-                                                <Button
-                                                    type="submit"
-                                                    color="yellow"
-                                                    className="telegram-bg telegram-text"
-                                                    >
-                                                    Оценить
-                                                </Button>
+                                                    <button className="button">
+                                                        Оценить
+                                                    </button>
                                             </Link>
                                             <Link to={`/rates/${event.movie.id}`}>
-                                                <Button
-                                                    type="submit"
-                                                    color="yellow"
-                                                    className="telegram-bg telegram-text"
-                                                    >
+                                                <button className="button secondary-button">
                                                     Оценки
-                                                </Button>
+                                                </button>
                                             </Link>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                    </div>
                 </div>
                 )
             }
             )}
+            <div className="flex justify-center">
+                        <button className="button" onClick={loadMore}>Еще</button>
+                     </div>
+            </div>
+            </Fade>
         </>
     );
 }

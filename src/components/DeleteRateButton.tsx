@@ -1,6 +1,11 @@
 import { Box } from "@mui/material";
 import { BASE_URL } from "../Constants";
 import { useTelegram } from "./UseTelegram";
+import DeleteIcon from '@mui/icons-material/Delete';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
+import { useState } from "react";
 
 interface DeleteRateButtonProps {
   rateId: string;
@@ -12,6 +17,19 @@ const DeleteRateButton = ({
   onDeleteSuccess,
 }: DeleteRateButtonProps) => {
   const { webApp, executeMethod } = useTelegram();
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    borderRadius: '20px',
+    boxShadow: 24,
+    p: 4,
+  };
 
   const handleDelete = async () => {
     executeMethod(
@@ -39,16 +57,33 @@ const DeleteRateButton = ({
   };
 
   return (
-    <Box className="flex justify-center">
-      <button
-        onClick={handleDelete}
+    <Box className="cursor-pointer">
+      <DeleteIcon
+        onClick={handleOpen}
         style={{
           color: "#d32f2f",
         }}
-        className="telegram-text"
       >
-        Удалить оценку
-      </button>
+      </DeleteIcon>
+
+      <div>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style} className='secondary-bg w-[90%]'>
+          <Typography className="telegram-text" id="modal-modal-title" variant="h6" component="h2">
+            Вы уверены что хотите удалить оценку?
+          </Typography>
+          <div className="justify-center">
+            <Button className="w-full" color="error" onClick={handleDelete}>Да</Button>
+            <Button className="w-full" onClick={handleClose}>Нет</Button>
+          </div>
+        </Box>
+      </Modal>
+    </div>
     </Box>
   );
 };

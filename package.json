@@ -6,16 +6,19 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev-prod": "vite --mode prod",
     "build": "tsc -b && vite build",
+    "build-prod": "tsc -b && vite build --mode prod",
     "lint": "eslint .",
     "preview": "vite preview",
-    "predeploy": "npm run build",
+    "predeploy": "npm run build-prod",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "@emotion/react": "^11.13.3",
-    "@emotion/styled": "^11.13.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.1.6",
+    "@mui/joy": "^5.0.0-beta.51",
     "@mui/material": "^6.1.5",
     "flowbite-react": "^0.10.1",
     "kk-bot-front": "file:",
@@ -26,6 +29,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
+    "@types/node": "^22.14.1",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",

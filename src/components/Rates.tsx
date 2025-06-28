@@ -1,29 +1,25 @@
 import { useTelegram } from "./UseTelegram";
 import { useEffect, useState, useCallback } from "react";
-import { BASE_URL } from "../Constants";
 import { useParams, Link } from "react-router-dom";
-import Rating from "@mui/material/Rating";
-import StarBorder from "@mui/icons-material/StarBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
-import RecordVoiceOverOutlinedIcon from "@mui/icons-material/RecordVoiceOverOutlined";
 import { useNavigate } from "react-router-dom";
-import { defaultAverage, defaultMovie, defaultYourRate } from "./constants";
-import { IMovie, IAverage, IYourRate } from "./interfaces";
+import { defaultAverage, defaultMovie, defaultYourRate, BASE_URL, mockUser } from "../Constants";
+import { IMovie, IAverage, IYourRate } from "../Interfaces";
 import DeleteRateButton from "./DeleteRateButton";
-import { Button } from "flowbite-react";
+import Collapse from '@mui/material/Collapse';
+import FullRating from "./FullRating";
+import GoToMainHeader from "./GoToMainHeader";
+import EditIcon from '@mui/icons-material/Edit';
 
 function Rates() {
   const { movieId } = useParams();
   const navigate = useNavigate();
   const { webApp, executeMethod } = useTelegram();
-  const { username } = webApp.initDataUnsafe?.user
-  //const username = "test";
+  const { username } = useTelegram().webApp.initDataUnsafe?.user ?? mockUser;;
 
   const [movie, setMovie] = useState<IMovie>(defaultMovie);
   const [average, setAverage] = useState<IAverage>(defaultAverage);
   const [yourRate, setYourRate] = useState<IYourRate>(defaultYourRate);
+  const [showPage, setShowPage] = useState<boolean>(false);
 
   const handleClick = async () => {
     executeMethod(
@@ -33,22 +29,22 @@ function Rates() {
     );
   };
 
-    const trimName = (rating : any) => {
-        let name = rating.firstName;
-        if (name == null) {
-            name = rating.username;
-        }
+  const trimName = (rating : any) => {
+      let name = rating.firstName;
+      if (name == null) {
+          name = rating.username;
+      }
 
-        if (name) {
-            if (name.length > 15) {
-                return name.substring(0, 12) + "..."
-            }
-        } 
-        return name;
-    };
+      if (name) {
+          if (name.length > 15) {
+              return name.substring(0, 12) + "..."
+          }
+      } 
+      return name;
+  };
 
   const fetchData = useCallback(() => {
-    fetch(BASE_URL + `/rate/${movieId}/${username}`)
+    const p1 = fetch(BASE_URL + `/rate/${movieId}/${username}`)
       .then((response) => response.json())
       .then((json) => {
         console.info(json);
@@ -56,7 +52,7 @@ function Rates() {
       })
       .catch((error) => console.error(error));
 
-    fetch(BASE_URL + "/movie/" + movieId)
+    const p2 = fetch(BASE_URL + "/movie/" + movieId)
       .then((response) => response.json())
       .then((json) => {
         console.info(json);
@@ -64,144 +60,117 @@ function Rates() {
       })
       .catch((error) => console.error(error));
 
-    fetch(BASE_URL + "/rate/average/" + movieId)
+    const p3 = fetch(BASE_URL + "/rate/average/" + movieId)
       .then((response) => response.json())
       .then((json) => {
         console.info(json);
         setAverage(json);
       })
       .catch((error) => console.error(error));
+
+    return Promise.all([p1, p2, p3]);
   }, [movieId, navigate, username]);
 
   useEffect(() => {
-    fetchData();
+    fetchData().then(() => setShowPage(true));
   }, [fetchData]);
 
   return (
-    <>
-      <Link to="/movies" className="p-4 telegram-text">&lt; К списку всех фильмов</Link>
+    <Collapse in={showPage}>
+      <GoToMainHeader />
       <div className="flex justify-center pb-2">
+        {movie.kinopoiskData && (
+          <img src={JSON.parse(movie.kinopoiskData).backdrop.url} alt={movie.name} width="500" height="600" />
+        )}
         <label className="telegram-text text-center text-2xl">
           Средняя оценка фильма
           <br />"{average.movieName}"<br />
           от Киноклуба
         </label>
       </div>
-      <div className="flex justify-center text-5xl pb-4">
+      <div className="flex justify-center text-5xl">
         <label className="opacity-50 telegram-text">
           {average.rating / 10}
         </label>
       </div>
-      {yourRate.id.length == 0 &&
+      {!yourRate.id &&
         <Link to={`/rate/${movieId}`}>
           <div className="flex justify-center">
-            <Button
+            <button
+              className="button"
               type="submit"
-              color="yellow"
-              className="telegram-bg telegram-text"
             >
               Оценить
-            </Button>
+            </button>
           </div>
         </Link>
       }
-      {yourRate.id.length > 0 &&
-        <div className="flex justify-center pb-2">
-          <label className="opacity-50 telegram-text align-middle">
+      <div className="flex justify-center mt-4">
+        <label className="opacity-50 telegram-text">Оценки участников ({movie.ratings.length}):</label>
+      </div>
+      {yourRate.id && (
+      <div className="flex justify-center pt-2">
+        <div className="flex justify-end w-full max-w-md gap-2 mr-6">
+          <Link onClick={handleClick}
+              to={"/rate/" + movieId}>
+            <EditIcon className="telegram-text opacity-50" />
+          </Link>
+          <DeleteRateButton
+            rateId={yourRate.id}
+            onDeleteSuccess={() => {
+              console.log("onDelete called in the rates");
+              setYourRate(defaultYourRate);
+              fetchData();
+          }}
+          />
+        </div>
+      </div>
+      )}
+      {yourRate.id &&
+        <div className="flex justify-center">
+          <div className="m-2 px-4 py-2 secondary-bg rounded-2xl border-2 telegram-accent-border telegram-text w-full max-w-md">
+          <div className="flex justify-between">
+          <label className="telegram-text opacity-50">
             Моя оценка:{" "}
           </label>
-          <Rating
-            className="pl-1"
-            emptyIcon={<StarBorder fontSize="inherit" htmlColor="#ffa726" />}
-            name="half-rating"
-            value={yourRate.rating / 10}
-            precision={0.5}
-            size="large"
-            readOnly
-          />
-          <div>
-            {yourRate.liked ? (
-              <FavoriteIcon color="error" className="align-middle ml-1" />
-            ) : (
-              <FavoriteBorderIcon color="error" className="align-middle ml-1" />
-            )}
+          <FullRating liked={yourRate.liked} discussable={yourRate.discussable} rating={yourRate.rating}/>
           </div>
-          <div>
-            {yourRate.discussable ? (
-              <RecordVoiceOverIcon
-                color="primary"
-                className="align-middle ml-1"
-              />
-            ) : (
-              <RecordVoiceOverOutlinedIcon
-                color="primary"
-                className="align-middle ml-1"
-              />
-            )}
+          {yourRate.comment && (
+            <p className="pt-2 text-sm whitespace-pre-line">
+            {yourRate.comment}
+            </p>
+          )}
           </div>
         </div>
       }
-      {yourRate.id && (
-      <div className="flex justify-center pb-1">
-        <Link
-          onClick={handleClick}
-          to={"/rate/" + movieId}
-          className="telegram-text"
-        >
-          Изменить оценку
-        </Link>
-      </div>
-      )}
-      {yourRate.id && (
-        <DeleteRateButton
-          rateId={yourRate.id}
-          onDeleteSuccess={() => {
-            console.log("onDelete called in the rates");
-            setYourRate(defaultYourRate);
-            fetchData();
-          }}
-        />
-      )}
-      <div className="flex justify-center mt-8">
-        <label className="opacity-50 telegram-text">Оценки участников ({movie.ratings.length}):</label>
-      </div>
+      <div className="pb-6">
       {movie.ratings
         .filter((r: any) => r.username != username)
         .map((rating: any) => (
           <div className="flex justify-center">
-            <div className="flex align-middle justify-center m-2 p-2 border-solid rounded-2xl border-2 telegram-border telegram-text align-middle">
-              <label className="opacity-50 telegram-text px-2">
+            <div className="m-1 px-4 py-2 secondary-bg rounded-2xl telegram-border telegram-text w-full max-w-md">
+              <div className="flex justify-between">
+              <label className="link-text">
                 <a
                   href={`https://t.me/${rating.username}`}
-                  className="align-middle underline"
+                  className="align-middle"
                 >
                   {trimName(rating)}
                 </a>
-                :{" "}
+                {" "}
               </label>
-              <Rating
-                emptyIcon={
-                  <StarBorder fontSize="inherit" htmlColor="#ffa726" />
-                }
-                name="half-rating"
-                value={rating.rating / 10}
-                precision={0.5}
-                size="large"
-                readOnly
-              />
-              {rating.liked && (
-                <FavoriteIcon color="error" className="align-middle ml-1" />
-              )}
-              {rating.discussable && (
-                <RecordVoiceOverIcon
-                  color="primary"
-                  className="align-middle ml-1"
-                />
+              <FullRating liked={rating.liked} discussable={rating.discussable} rating={rating.rating} />
+              </div>
+              {rating.comment && (
+                <p className="text-sm whitespace-pre-line mt-2">
+                {rating.comment}
+              </p>
               )}
             </div>
           </div>
-        ))}
-    </>
+      ))}
+      </div>
+    </Collapse>
   );
 }
 

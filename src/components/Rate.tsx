@@ -4,32 +4,40 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
 import RecordVoiceOverOutlinedIcon from "@mui/icons-material/RecordVoiceOverOutlined";
-import { Button } from "flowbite-react";
 import { useTelegram } from "./UseTelegram";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BASE_URL } from "../Constants";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import {
+  BASE_URL,
   defaultMovie,
   defaultRate,
-  //mockUser
-} from "./constants";
-import { IRate, IMovie } from "./interfaces";
+  mockUser,
+} from "../Constants";
+import { IRate, IMovie } from "../Interfaces";
+import CommentInput from "./CommentInput";
+import Collapse from '@mui/material/Collapse';
+import GoToMainHeader from "./GoToMainHeader";
 
 function Rate() {
   const { movieId } = useParams();
   const { webApp, executeMethod } = useTelegram();
-  const { username, first_name } = webApp.initDataUnsafe?.user;
-  //const { id, username, first_name } = mockUser;
+  const { username, first_name } = useTelegram().webApp.initDataUnsafe?.user ?? mockUser;
 
   const [rate, setRate] = useState<IRate>(defaultRate);
   const [rating, setRating] = useState<number>(0);
   const [liked, setLiked] = useState(false);
   const [discussable, setDiscussable] = useState(false);
+  const [comment, setComment] = useState<string>("")
   const [movie, setMovie] = useState<IMovie>(defaultMovie);
+  const [show, setShow] = useState<boolean>(true);
+  const [showPage, setShowPage] = useState<boolean>(false);
 
   const navigate = useNavigate();
+
+  const collapse = () => {
+    setShow(!show);
+  }
 
   const handleLikeUnlike = async () => {
     executeMethod(
@@ -50,60 +58,37 @@ function Rate() {
   };
 
   const handleSubmit = (event: any) => {
-
     executeMethod(
       "HapticFeedback.impactOccurred",
       () => webApp.HapticFeedback.impactOccurred("heavy"),
       true
     );
     if (rate.id) {
-      PutRating(event);
+      sendRate(event, "PUT");
     } else {
-      PostRating(event);
+      sendRate(event, "POST");
     }
   };
 
-  const PostRating = (event: any) => {
+  const sendRate = (event: any, method: string) => {
     event.preventDefault();
-    const rateDto = {
-      rating: rating,
-      movieId: movieId,
-      username: username,
-      firstName: first_name,
-      telegramId: 0,
-      liked: liked,
-      discussable: discussable,
-    };
-    fetch(BASE_URL + "/rate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "Application/JSON",
-      },
-      body: JSON.stringify(rateDto),
-    })
-      .then((response) => response.status)
-      .then((status) => {
-        if (status == 200) {
-          navigate("/rates/" + movieId);
-        }
-      })
-      .catch((error) => console.error(error));
-  };
-
-  const PutRating = (event: any) => {
-    event.preventDefault();
+    let commentValue = null;
+    if (!event.target.comment.classList.contains("empty")) {
+      commentValue = event.target.comment.value;
+    }
     const rateDto = {
       id: rate.id,
       rating: rating,
       movieId: movieId,
-      telegramId: 0,
       username: username,
       firstName: first_name,
+      telegramId: 0,
       liked: liked,
       discussable: discussable,
+      comment: commentValue
     };
     fetch(BASE_URL + "/rate", {
-      method: "PUT",
+      method: method,
       headers: {
         "Content-Type": "Application/JSON",
       },
@@ -119,7 +104,7 @@ function Rate() {
   };
 
   useEffect(() => {
-    fetch(BASE_URL + `/rate/${movieId}/${username}`)
+    const p1 = fetch(BASE_URL + `/rate/${movieId}/${username}`)
       .then((response) => response.json())
       .then((json) => {
         console.info(json);
@@ -127,23 +112,28 @@ function Rate() {
         setRating(json.rating);
         setLiked(json.liked);
         setDiscussable(json.discussable);
+        setComment(json.comment);
       })
       .catch((error) => console.error(error));
 
-    fetch(BASE_URL + "/movie/" + movieId)
+    const p2 = fetch(BASE_URL + "/movie/" + movieId)
       .then((response) => response.json())
       .then((json) => {
         console.info(json);
         setMovie(json);
       })
       .catch((error) => console.error(error));
+
+    Promise.all([p1, p2]).then(() => setShowPage(true));
   }, [movieId, username]);
 
   return (
-    <>
-      <Link to="/movies" className="p-4 telegram-text">&lt; К списку всех фильмов</Link>
-      <div className="flex justify-center items-center">
+    <Collapse in={showPage}>
+      <div className="h-screen">
+      <GoToMainHeader />
+      <div className="flex justify-center">
         <form onSubmit={handleSubmit}>
+          <Collapse in={show}> 
           <div className="flex justify-center pb-2">
             <h1 className="telegram-text text-3xl">{movie.name}</h1>
           </div>
@@ -225,18 +215,19 @@ function Rate() {
               </div>
             </div>
           </div>
+          </Collapse>
+          <div>
+            <CommentInput comment={comment} collapseCallback={collapse} />
+          </div>
           <div className="flex justify-center">
-            <Button
-              type="submit"
-              color="yellow"
-              className="telegram-bg telegram-text"
-            >
+            <button className="button" type="submit">
               Оценить
-            </Button>
+            </button>
           </div>
         </form>
       </div>
-    </>
+    </div>
+    </Collapse>
   );
 }
 

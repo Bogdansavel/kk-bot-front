@@ -64,8 +64,7 @@ function Wrapped() {
     };
     const handleClose = () => setOpen(false);
     const { webApp } = useTelegram();
-    const { username, first_name } = webApp.initDataUnsafe?.user
-    const id = 0
+    const { username, first_name, id } = webApp.initDataUnsafe?.user
     //const username = "mariiazavialova"; const first_name = "Dascha";
     const style = {
         position: 'absolute',
@@ -86,8 +85,8 @@ function Wrapped() {
         }
 
         if (name) {
-            if (name.length > 15) {
-                return name.substring(0, 12) + "..."
+            if (name.length > 10) {
+                return name.substring(0, 8) + "..."
             }
         } 
         return name;
@@ -117,7 +116,7 @@ function Wrapped() {
         }
 
         if (rate < 5) {
-            return "ценитель";
+            return "всеядны";
         }
     }
 
@@ -157,7 +156,10 @@ function Wrapped() {
             setLoading(false);
             setWrapped(json);
           })
-          .catch((error) => console.error(error));
+          .catch((error) => {
+            setLoading(false);
+            console.error(error);
+        });
     }, []);
 
     useEffect(() => {
@@ -186,11 +188,13 @@ function Wrapped() {
                 <div className="text-xl"><b>{wrapped.eventsCount + 2}</b> Киноклубов!</div>
                 <div className="text-xl">Это около <b>{(wrapped.eventsCount + 2 )*5}</b> часов вместе!</div>
                 <div className="text-xl">Или <b>{(((wrapped.eventsCount + 2 )*5)/24).toFixed(1)}</b> суток!</div>
-                <br/>
-                <div className="text-xl">С 12 января 2024 по 12 января 2025 всего <b>52</b> воскресенья!</div>
-                <div className="text-xl">И хоть киноклубы проходили не только по воскресеньям, </div>
-                <div className="text-xl">они проводились раз в неделю!</div>
-                <div className="text-xl">Значит за год было всего <b>{52 - (wrapped.eventsCount + 2 )}</b> недели без Киноклуба!</div>
+                <img className="py-4" src="https://raw.githubusercontent.com/Bogdansavel/kk-bot-front/refs/heads/main/poster.png" />
+                <div>
+                    С 12 января 2024 по 12 января 2025 всего <b>52</b> воскресенья!
+                    И хоть киноклубы проходили не только по воскресеньям,
+                    они проводились раз в неделю!
+                    Значит за год было всего <b>{52 - (wrapped.eventsCount + 2 )}</b> недели без Киноклуба!
+                </div>
                 <br />
                 <div className="text-xl">И хоть это не соревнование</div>
                 <div className="text-xl">вот статистика :)</div>
@@ -291,12 +295,6 @@ function Wrapped() {
                         </div>
                     ))}
                 </div>
-                <div className="text-xl p-4">Самый старый из просмотренных: </div>
-                <div className="flex justify-center telegram-text"><img className="col-start-1 w-1/3" src={wrapped.oldestMovie.poster.url} /></div>
-                <div className="flex justify-center text-xl m-2"><b>{wrapped.oldestMovie.year}</b></div>
-                <div className="text-xl p-4">Самый новый: </div>
-                <div className="flex justify-center pb-2"><img className="col-start-1 w-1/3" src={wrapped.newestMovie.poster.url} /></div>
-                <div className="text-xl m-2"><b>{wrapped.newestMovie.year}</b></div>
                 <div className="text-2xl">Самые спорные</div>
                 <div className="grid gap-4 p-2 grid-cols-3">
                     {wrapped.controverses.map((movie: any) => (
@@ -327,6 +325,12 @@ function Wrapped() {
                         </div>
                     ))}
                 </div>
+                <div className="text-xl p-4">Самый старый из просмотренных: </div>
+                <div className="flex justify-center telegram-text"><img className="col-start-1 w-1/3" src={wrapped.oldestMovie.poster.url} /></div>
+                <div className="flex justify-center text-xl m-2"><b>{wrapped.oldestMovie.year}</b></div>
+                <div className="text-xl p-4">Самый новый: </div>
+                <div className="flex justify-center pb-2"><img className="col-start-1 w-1/3" src={wrapped.newestMovie.poster.url} /></div>
+                <div className="text-xl m-2"><b>{wrapped.newestMovie.year}</b></div>
                 <div className="text-2xl">Поколения</div>
                 <div className="grid gap-4 p-2 grid-cols-3">
                     {wrapped.ages.map((age: any) => (
