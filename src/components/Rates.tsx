@@ -77,25 +77,43 @@ function Rates() {
 
   return (
     <Collapse in={showPage}>
-      <GoToMainHeader />
-      <div className="flex justify-center pb-2">
-        {movie.kinopoiskData && (
-          <img src={JSON.parse(movie.kinopoiskData).backdrop.url} alt={movie.name} width="500" height="600" />
-        )}
-        <label className="telegram-text text-center text-2xl">
+        {movie.kinopoiskData && JSON.parse(movie.kinopoiskData).backdrop.url && (
+        <div className="pb-2 container w-full">
+            <img className="preview w-full" src={JSON.parse(movie.kinopoiskData).backdrop.url} alt={movie.name}/>
+            <div className="back-text">
+            <Link to="/movies" className="telegram-text">
+                <div className="p-2 secondary-bg rounded-xl font-bold text-xs [--bg-opacity:10%]">
+                &lt; Все фильмы
+                </div>
+            </Link>
+        </div>
+        <div className="telegram-text text-center text-sm title-text">
           Средняя оценка фильма
-          <br />"{average.movieName}"<br />
+          <div className="text-3xl font-bold pb-1">{average.movieName}</div>
           от Киноклуба
-        </label>
-      </div>
-      <div className="flex justify-center text-5xl">
+        </div>
+        </div>
+        )}
+        {!movie.kinopoiskData || !JSON.parse(movie.kinopoiskData).backdrop.url && (
+        <div className="pb-2 container w-full">
+            <GoToMainHeader />
+            <div className="flex justify-center pb-2">
+              <label className="telegram-text text-center text-2xl">
+                Средняя оценка фильма
+                <br />"{average.movieName}"<br />
+                от Киноклуба
+              </label>
+            </div>
+        </div>
+        )}
+      <div className="flex justify-center text-7xl">
         <label className="opacity-50 telegram-text">
           {average.rating / 10}
         </label>
       </div>
       {!yourRate.id &&
         <Link to={`/rate/${movieId}`}>
-          <div className="flex justify-center">
+          <div className="flex justify-center pt-4">
             <button
               className="button"
               type="submit"

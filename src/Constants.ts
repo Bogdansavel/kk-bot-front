@@ -23,6 +23,7 @@ export const defaultMovie: IMovie = {
   posterUrl: "",
   averageRating: 0,
   member: defaultMember,
+  kinopoiskData: ""
 };
 
 export const defaultRate: IRate = {
