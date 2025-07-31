@@ -120,7 +120,7 @@ body {
     margin-top: auto;
 }
 
-.container {
+.movie-container {
     display: flex;
     flex-direction: column;
     height: 100%;

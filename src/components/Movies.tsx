@@ -84,7 +84,6 @@ function Movies() {
     };
 
     useEffect(() => {
-        console.log("useEffect is called")
         fetchData(0);
     }, []);
 
@@ -125,7 +124,7 @@ function Movies() {
                                 <div className="grid grid-cols-3 p-4 telegram-text">
                                     <img className="col-start-1 object-contain h-48 pr-4" src={event.movie.posterUrl} />
                                     <div className="col-start-2 col-span-2">
-                                        <div className="container">
+                                        <div className="movie-container">
                                         <div className="top">
                                         <label className="text-xl font-bold">{event.movie.name}</label><br/>
                                         <div className="flex content-center justify-center">
