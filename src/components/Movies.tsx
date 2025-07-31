@@ -10,6 +10,7 @@ import Fade from '@mui/material/Fade';
 import { ratesCountLable, mockUser, BASE_URL } from "../Constants"
 import { Box } from "@mui/material";
 import { useTelegram } from "./UseTelegram";
+import PersonIcon from '@mui/icons-material/Person';
 
 const monthes = new Map();
 monthes.set(1, "Январь");
@@ -83,6 +84,7 @@ function Movies() {
     };
 
     useEffect(() => {
+        console.log("useEffect is called")
         fetchData(0);
     }, []);
 
@@ -119,12 +121,25 @@ function Movies() {
             }
             return (
                 <div className="flex justify-center">
-                            <div>
+                            <div className="wrapper border-b-2 border-solid m-2">
                                 <div className="grid grid-cols-3 p-4 telegram-text">
                                     <img className="col-start-1 object-contain h-48 pr-4" src={event.movie.posterUrl} />
                                     <div className="col-start-2 col-span-2">
+                                        <div className="container">
+                                        <div className="top">
                                         <label className="text-xl font-bold">{event.movie.name}</label><br/>
-                                        <label>{event.getDay()} {monthes2.get(event.getMonth())} {event.getYear()}</label><br/>
+                                        <div className="flex content-center justify-center">
+                                        <label className="mr-auto text-xs">{event.getDay()} {monthes2.get(event.getMonth())} {event.getYear()}</label>
+                                        {event.movie.member && ( 
+                                                <Link
+                                                    to={`https://t.me/${event.movie.member.username}`}
+                                                    className="link-text text-xs justify-center"
+                                                >
+                                                    {trimName(event.movie.member)}
+                                                    <PersonIcon fontSize="small" className="link-text ml-1" />
+                                                </Link>
+                                        )}
+                                        </div>
                                         {yourRate &&
                                             <div className="flex justify-left pb-2 pt-2">
                                                 <Rating
@@ -151,26 +166,22 @@ function Movies() {
                                                 </div>
                                             </div>
                                         }
-                                        <div className="text-2xl mt-2">{event.movie.averageRating / 10}</div><div className="opacity-50">({event.movie.ratings.length} {ratesCountLable(event.movie.ratings.length)})</div>
-                                        {event.movie.member && ( 
-                                            <div>От: <a
-                                            href={`https://t.me/${event.movie.member.username}`}
-                                            className="align-middle link-text"
-                                            >
-                                            {trimName(event.movie.member)}
-                                            </a></div>
-                                        )}
-                                        <div className="flex gap-2 pt-4">
-                                            <Link to={`/rate/${event.movie.id}`}>
-                                                    <button className="button">
+                                        </div>
+                                        <div className="bottom">
+                                        <div className="flex my-2">
+                                            <div className="text-4xl avg-rate">{event.movie.averageRating / 10}</div>
+                                            <Link to={`/rate/${event.movie.id}`} className="rate">
+                                                    <div className="button py-2">
                                                         Оценить
-                                                    </button>
+                                                    </div>
                                             </Link>
-                                            <Link to={`/rates/${event.movie.id}`}>
-                                                <button className="button secondary-button">
-                                                    Оценки
-                                                </button>
-                                            </Link>
+                                        </div>
+                                        <div className="row-span-2 col-span-1 mt-3">
+                                        <Link to={`/rates/${event.movie.id}`}>
+                                            <div className="text-xs secondary-button px-4 py-2 font-bold rounded-3xl">{event.movie.ratings.length} {ratesCountLable(event.movie.ratings.length)}</div>
+                                        </Link>
+                                        </div>
+                                        </div>
                                         </div>
                                     </div>
                                 </div>

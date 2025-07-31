@@ -44,6 +44,14 @@ body {
     padding: 8px 16px 8px 16px;
 }
 
+.avg-rate {
+    margin-right: auto;
+}
+
+.mr-auto {
+    margin-right: auto;
+}
+
 .secondary-button {
     background-color: color-mix(in srgb, var(--tg-theme-button-color), var(--tg-theme-bg-color) 80%);
     color: var(--tg-theme-button-color);
@@ -73,4 +81,18 @@ body {
     border-radius: 10px;
     width: 100%;
     resize: none;
+}
+
+.bottom {
+    margin-top: auto;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.wrapper {
+    border-color: var(--tg-theme-secondary-bg-color);
 }
