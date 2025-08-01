@@ -120,13 +120,12 @@ function Movies() {
             }
             return (
                 <div className="flex justify-center">
-                            <div className="wrapper border-b-2 border-solid m-2">
+                            <div className="wrapper border-t-2 border-solid">
                                 <div className="grid grid-cols-3 p-4 telegram-text">
-                                    <img className="col-start-1 object-contain h-48 pr-4" src={event.movie.posterUrl} />
-                                    <div className="col-start-2 col-span-2">
+                                    <img className="poster col-start-1 max-h-80" src={event.movie.posterUrl} />
+                                    <div className="col-start-2 col-span-2 pl-4">
                                         <div className="movie-container">
                                         <div className="top">
-                                        <label className="text-xl font-bold">{event.movie.name}</label><br/>
                                         <div className="flex content-center justify-center">
                                         <label className="mr-auto text-xs">{event.getDay()} {monthes2.get(event.getMonth())} {event.getYear()}</label>
                                         {event.movie.member && ( 
@@ -139,6 +138,7 @@ function Movies() {
                                                 </Link>
                                         )}
                                         </div>
+                                        <label className="text-xl font-bold">{event.movie.name}</label>
                                         {yourRate &&
                                             <div className="flex justify-left pb-2 pt-2">
                                                 <Rating
@@ -169,11 +169,20 @@ function Movies() {
                                         <div className="bottom">
                                         <div className="flex my-2">
                                             <div className="text-4xl avg-rate">{event.movie.averageRating / 10}</div>
-                                            <Link to={`/rate/${event.movie.id}`} className="rate">
-                                                    <div className="button py-2">
-                                                        Оценить
-                                                    </div>
-                                            </Link>
+                                            {yourRate &&
+                                                <Link to={`/rate/${event.movie.id}`} className="rate">
+                                                <div className="button-3 py-2">
+                                                    Изменить
+                                                </div>
+                                                </Link>  
+                                            }
+                                            {!yourRate &&
+                                                <Link to={`/rate/${event.movie.id}`} className="rate">
+                                                <div className="button py-2">
+                                                    Оценить
+                                                </div>
+                                                </Link>    
+                                            }
                                         </div>
                                         <div className="row-span-2 col-span-1 mt-3">
                                         <Link to={`/rates/${event.movie.id}`}>
@@ -189,7 +198,7 @@ function Movies() {
                 )
             }
             )}
-            <div className="flex justify-center">
+            <div className="flex justify-center pb-10">
                         <button className="button" onClick={loadMore}>Еще</button>
                      </div>
             </div>
