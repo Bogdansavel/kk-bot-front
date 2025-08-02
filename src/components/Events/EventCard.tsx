@@ -1,133 +1,63 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { Event, IMember, IRate } from "../Interfaces";
+import { Event, IRate, IMember } from "../../Interfaces";
 import Rating from "@mui/material/Rating";
 import StarBorder from "@mui/icons-material/StarBorder";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import RecordVoiceOverIcon from "@mui/icons-material/RecordVoiceOver";
-import LinearProgress from '@mui/material/LinearProgress';
-import Fade from '@mui/material/Fade';
-import { ratesCountLable, mockUser, BASE_URL } from "../Constants"
-import { Box } from "@mui/material";
-import { useTelegram } from "./UseTelegram";
+import { ratesCountLable, mockUser } from "../../Constants"
+import { useTelegram } from "../UseTelegram";
 import PersonIcon from '@mui/icons-material/Person';
+import { Link } from "react-router-dom";
+
+interface EventCardProps {
+    event: Event
+}
 
 const monthes = new Map();
-monthes.set(1, "Январь");
-monthes.set(2, "Февраль");
-monthes.set(3, "Март");
-monthes.set(4, "Апрель");
-monthes.set(5, "Май");
-monthes.set(6, "Июнь");
-monthes.set(7, "Июль");
-monthes.set(8, "Август");
-monthes.set(9, "Сентябрь");
-monthes.set(10, "Октябрь");
-monthes.set(11, "Ноябрь");
-monthes.set(12, "Декабрь");
+monthes.set(1, "января");
+monthes.set(2, "февраля");
+monthes.set(3, "марта");
+monthes.set(4, "апреля");
+monthes.set(5, "мая");
+monthes.set(6, "июня");
+monthes.set(7, "июля");
+monthes.set(8, "августа");
+monthes.set(9, "сентября");
+monthes.set(10, "октября");
+monthes.set(11, "ноября");
+monthes.set(12, "декабря");
 
-const monthes2 = new Map();
-monthes2.set(1, "января");
-monthes2.set(2, "февраля");
-monthes2.set(3, "марта");
-monthes2.set(4, "апреля");
-monthes2.set(5, "мая");
-monthes2.set(6, "июня");
-monthes2.set(7, "июля");
-monthes2.set(8, "августа");
-monthes2.set(9, "сентября");
-monthes2.set(10, "октября");
-monthes2.set(11, "ноября");
-monthes2.set(12, "декабря");
-
-function Movies() {
-    const [events, setEvents] = useState<Event[]>([]);
-    const [loading, setLoading] = useState(true);
-    const { username } = useTelegram().webApp.initDataUnsafe?.user ?? mockUser
-    const [page, setPage] = useState(0);
-
-    const loadMore = () => {
-        fetchData(page + 1);
-        setPage(page + 1);
+const trimName = (member : IMember) => {
+    let name = member.firstName;
+    if (name == null) {
+        name = member.username;
     }
 
-    const trimName = (member : IMember) => {
-        let name = member.firstName;
-        if (name == null) {
-            name = member.username;
+    if (name) {
+        if (name.length > 15) {
+            return name.substring(0, 12) + "..."
         }
+    } 
+    return name;
+};
 
-        if (name) {
-            if (name.length > 15) {
-                return name.substring(0, 12) + "..."
-            }
-        } 
-        return name;
-    };
-
-    const fetchData = (page:number) => {
-        fetch(BASE_URL + `/event/movies?pageNumber=${page}&pageSize=10`)
-          .then((response) => response.json())
-          .then((json) => {
-            console.info(json);
-            setLoading(false);
-            const objs = json.map((obj: Event) => {
-                return new Event(obj.movie, obj.language, obj.date, obj.members);
-            })
-            if (page === 0) {
-                setEvents(objs);
-            } else {
-                setEvents([...events, ...objs])
-            }
-          })
-          .catch((error) => console.error(error));
-    };
-
-    useEffect(() => {
-        fetchData(0);
-    }, []);
-
+function EventCard(props: EventCardProps) {
+    const event = props.event
+    const { username } = useTelegram().webApp.initDataUnsafe?.user ?? mockUser
+    let yourRate = null;
+    const youRates = event?.movie.ratings.filter((rating: IRate) => rating.username == username);
+    if (youRates?.length > 0) {
+        yourRate = youRates[0];
+    }
     return (
-        <>
-            <div className="flex justify-center pt-4 w-full">
-                {false && (
-                    <div>
-                    <Link to="/wrapped">
-                        <div className="telegram-bg telegram-text p-3 rounded-2xl border-2 border-indigo-500/100">
-                            ИТОГИ ГОДА!
-                        </div>
-                    </Link>
-                    </div>
-                )}
-                <div>
-                    <Fade
-                        in={loading}
-                        unmountOnExit
-                        >
-                        <Box sx={{ width: '100%' }}>
-                            <LinearProgress />
-                        </Box>
-                    </Fade>
-                </div>
-            </div>
-            <Fade in={!loading}>
-            <div>
-            {events.map((event: Event) => {
-            let yourRate = null;
-            const youRates = event.movie.ratings.filter((rating: IRate) => rating.username == username);
-            if (youRates.length > 0) {
-                yourRate = youRates[0];
-            }
-            return (
-                <div className="flex justify-center">
-                            <div className="wrapper border-t-2 border-solid">
-                                <div className="grid grid-cols-3 p-4 telegram-text">
+        <div className="flex justify-center">
+        {event &&
+            <div className="grid grid-cols-3 p-4 telegram-text">
                                     <img className="poster col-start-1 max-h-80" src={event.movie.posterUrl} />
                                     <div className="col-start-2 col-span-2 pl-4">
-                                        <div className="movie-container">
+                                        <div className="movie-container">  
                                         <div className="top">
                                         <div className="flex content-center justify-center">
-                                        <label className="mr-auto text-xs">{event.getDay()} {monthes2.get(event.getMonth())} {event.getYear()}</label>
+                                        <label className="mr-auto text-xs">{event.getDay()} {monthes.get(event.getMonth())} {event.getYear()}</label>
                                         {event.movie.member && ( 
                                                 <Link
                                                     to={`https://t.me/${event.movie.member.username}`}
@@ -193,18 +123,9 @@ function Movies() {
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                </div>
-                )
-            }
-            )}
-            <div className="flex justify-center pb-10">
-                        <button className="button" onClick={loadMore}>Еще</button>
-                     </div>
-            </div>
-            </Fade>
-        </>
-    );
+        }
+        </div>
+    )
 }
 
-export default Movies;
+export default EventCard
